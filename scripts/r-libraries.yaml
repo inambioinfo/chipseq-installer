@@ -1,0 +1,36 @@
+---
+# Configuration file defining R specific libraries that are installed
+# via Bioconductor.
+# metabric dependencies: hwriter, GenomeGraphs, illuminaHumanv3.db
+# GenometriCorr dependencies: IRanges, GenomicRanges, gplots, rtracklayer
+ - amap
+ - beeswarm
+ - Biobase
+ - car
+ - caTools
+ - ddCt
+ - gdata
+ - GenomeGraphs
+ - GenomicRanges
+ - gplots
+ - ggplot2
+ - graphics
+ - grid
+ - gtools
+ - heatmap.plus
+ - hgu133a.db
+ - hgu133plus2.db
+ - hwriter
+ - illuminaHumanv3.db
+ - IRanges
+ - kernlab
+ - multicore
+ - org.Hs.eg.db
+ - party
+ - PropCIs
+ - R2HTML
+ - RColorBrewer
+ - reshape
+ - rtracklayer
+ - survival
+ - yacca
