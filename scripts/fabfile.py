@@ -210,7 +210,6 @@ def install_python_libraries():
     vlrun("pip install numpy")
     vlrun("pip install cython")
     vlrun("pip install numexpr")
-    _install_pytables_lib()
     vlrun("pip install pyyaml")
     vlrun("pip install rpy2")
     _install_bx_python()
@@ -234,18 +233,6 @@ def _install_rpy_lib():
             lrun("sed -i 's/\[0\-9\]/\[0\-9\]\+/g' rpy_tools.py")
             lrun("sed -i 's/Rdevices.h/Rembedded.h/g' src/RPy.h")
             vlrun("python setup.py install")
-
-@_if_not_python_lib("tables")
-def _install_pytables_lib():
-    """Install PyTables 2.3.1 http://www.pytables.org/
-    """
-    url = "http://sourceforge.net/projects/pytables/files/pytables/2.3.1/tables-2.3.1.tar.gz"
-    _get_install(url, env, _python_hdf5_build)
-
-def test_pytables_lib():
-    """Testing installation of PyTables
-    """
-    vlrun("python -c 'import tables; tables.test()'")
 
 def install_r():
     """Install R 2.15.2
