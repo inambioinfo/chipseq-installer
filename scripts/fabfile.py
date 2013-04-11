@@ -107,7 +107,7 @@ def vlrun(command):
     Usage:
         vlrun('pip install tables')
     """
-    source = 'source %(project_dir)s/bin/activate && source %(project_dir)s/environment.bashrc && ' % env
+    source = 'source %(project_dir)s/bin/activate && source %(project_dir)s/%(env_setup)s && ' % env
     return lrun(source + command)    
 
 def _make_dir(path):
@@ -350,7 +350,7 @@ def install_bedtools():
 def setup_environment():
     """Copy adhoc environment variables
     """
-    lrun('cp %(chipseq_build_path)s/%(env_setup)s %(project_dir)s/environment.bashrc' % env)
+    lrun('cp %(chipseq_build_path)s/%(env_setup)s %(project_dir)s/%(env_setup)s' % env)
     _make_dir(env.tmp_dir)
 
 def install_chipseq():
