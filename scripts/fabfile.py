@@ -264,7 +264,7 @@ def install_r_libraries():
     plus GenometriCorr & RMySQL_0.9-3
     """
     # Load list of R libraries to install
-    r_lib_stream = open(os.path.join(env.galaxy_build_path, "scripts/r-libraries.yaml"), 'r')
+    r_lib_stream = open(os.path.join(env.chipseq_build_path, "scripts/r-libraries.yaml"), 'r')
     r_lib = yaml.load(r_lib_stream)
     # Create an Rscript file with install details.
     out_file = "install_packages.R"
