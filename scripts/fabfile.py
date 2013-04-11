@@ -302,9 +302,9 @@ def install_r_libraries():
     vlrun("Rscript %s" % out_file)
     lrun("rm -f %s" % out_file)
     # Install metabric dependencies
-    with lcd(env.tmp_dir):
-        lrun("wget http://cran.r-project.org/src/contrib/RMySQL_0.9-3.tar.gz")
-        vlrun("R CMD INSTALL --configure-args='--with-mysql-dir=/opt/local/server/database/mysql/' RMySQL_0.9-3.tar.gz")    
+    #with lcd(env.tmp_dir):
+    #    lrun("wget http://cran.r-project.org/src/contrib/RMySQL_0.9-3.tar.gz")
+    #    vlrun("R CMD INSTALL --configure-args='--with-mysql-dir=/opt/local/server/database/mysql/' RMySQL_0.9-3.tar.gz")    
 
 def install_ucsc_tools():
     """Install useful executables from UCSC.
