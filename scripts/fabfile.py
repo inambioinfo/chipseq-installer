@@ -348,7 +348,7 @@ def install_chipseq():
         if not lexists(env.chipseq_path):
             update = False
             with lcd(os.path.split(env.chipseq_path)[0]):
-                lrun('svn co svn://uk-cri-lbio01:9000/pipelines/chipseq/trunk/Process10')
+                lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/Process10')
         with lcd(env.chipseq_path):
             if update:
                 lrun('svn update')
