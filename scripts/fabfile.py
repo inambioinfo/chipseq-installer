@@ -69,6 +69,116 @@ def deploy_chipseq():
     install_chipseq()
 
 # ================================================================================
+# == Decorators and context managers
+
+def _if_not_installed(pname):
+    """Decorator that checks if a callable program is installed.
+    """
+    def argcatcher(func):
+        def decorator(*args, **kwargs):
+            with settings(
+                hide('warnings', 'running', 'stdout', 'stderr'),
+                warn_only=True):
+                result = vlrun(pname)
+                if result.return_code == 127:
+                    return func(*args, **kwargs)
+        return decorator
+    return argcatcher
+
+def _if_not_python_lib(library):
+    """Decorator that checks if a python library is installed.
+    """
+    def argcatcher(func):
+        def decorator(*args, **kwargs):
+            with settings(warn_only=True):
+                result = vlrun("python -c 'import %s'" % library)
+            if result.failed:
+                return func(*args, **kwargs)
+        return decorator
+    return argcatcher
+
+# -- Standard build utility simplifiers
+
+def lexists(path):
+    return os.path.exists(path)
+
+def vlrun(command):
+    """Run a command in a virtual environment. This prefixes the run command with the source command.
+    Usage:
+        vlrun('pip install tables')
+    """
+    source = 'source %(project_dir)s/bin/activate && source %(project_dir)s/environment.bashrc && ' % env
+    return lrun(source + command)    
+
+def _make_dir(path):
+    with settings(warn_only=True):
+        if lrun("test -d %s" % path).failed:
+            lrun("mkdir -p %s" % path)
+
+def _get_expected_file(url):
+    tar_file = os.path.split(url)[-1]
+    safe_tar = "--pax-option='delete=SCHILY.*,delete=LIBARCHIVE.*'"
+    exts = {(".tar.gz", ".tgz") : "tar %s -xzpf" % safe_tar,
+            (".tar.bz2",): "tar %s -xjpf" % safe_tar,
+            (".zip",) : "unzip"}
+    for ext_choices, tar_cmd in exts.iteritems():
+        for ext in ext_choices:
+            if tar_file.endswith(ext):
+                return tar_file, tar_file[:-len(ext)], tar_cmd
+    raise ValueError("Did not find extract command for %s" % url)
+
+def _safe_dir_name(path, dir_name, need_dir=True):
+    replace_try = ["", "-src", "_core"]
+    for replace in replace_try:
+        check = dir_name.replace(replace, "")
+        if lexists(os.path.join(path, check)):
+            return check
+        # still couldn't find it, it's a nasty one
+        for check_part in (dir_name.split("-")[0].split("_")[0],
+                           dir_name.split("-")[-1].split("_")[-1],
+                           dir_name.split(".")[0]):
+            with settings(hide('warnings', 'running', 'stdout', 'stderr'),
+                          warn_only=True):
+                dirs = lrun("ls -d1 %s/*%s*/" % (path, check_part)).split("\n")
+                dirs = [x for x in dirs if "cannot access" not in x and "No such" not in x]
+                if len(dirs) == 1:
+                    return dirs[0]
+                if need_dir:
+                    raise ValueError("Could not find directory %s" % dir_name)
+
+def _fetch_and_unpack(path, url, need_dir=True):
+    if url.startswith(("git", "svn", "hg", "cvs")):
+        lrun(url)
+        base = os.path.basename(url.split()[-1])
+        return os.path.splitext(base)[0]
+    else:
+        tar_file, dir_name, tar_cmd = _get_expected_file(url)
+        if not lexists(tar_file):
+            lrun("wget --no-check-certificate %s" % url)
+            lrun("%s %s" % (tar_cmd, tar_file))
+        return _safe_dir_name(path, dir_name, need_dir)
+
+def _configure_make(env, options=None):
+    if options:
+        lrun("./configure --disable-werror --prefix=%s %s" % (env.project_dir, options))
+    else:
+        lrun("./configure --disable-werror --prefix=%s" % (env.project_dir))
+    lrun("make")
+    lrun("make install")
+
+def _python_build(env, option=None):
+    vlrun("python setup.py install")
+
+def _get_install(url, env, make_command, make_options=None):
+    """Retrieve source from a URL and install in our system directory.
+    """
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
+            make_command(env, make_options)
+
+
+# ================================================================================
 # == Required dependencies
 
 def install_dependencies():
@@ -256,113 +366,3 @@ def install_chipseq():
             if update:
                 lrun('svn update')
 
-
-# ================================================================================
-# == Decorators and context managers
-
-def _if_not_installed(pname):
-    """Decorator that checks if a callable program is installed.
-    """
-    def argcatcher(func):
-        def decorator(*args, **kwargs):
-            with settings(
-                hide('warnings', 'running', 'stdout', 'stderr'),
-                warn_only=True):
-                result = vlrun(pname)
-                if result.return_code == 127:
-                    return func(*args, **kwargs)
-        return decorator
-    return argcatcher
-
-def _if_not_python_lib(library):
-    """Decorator that checks if a python library is installed.
-    """
-    def argcatcher(func):
-        def decorator(*args, **kwargs):
-            with settings(warn_only=True):
-                result = vlrun("python -c 'import %s'" % library)
-            if result.failed:
-                return func(*args, **kwargs)
-        return decorator
-    return argcatcher
-                 
-# -- Standard build utility simplifiers
-
-def lexists(path):
-    return os.path.exists(path)
-
-def vlrun(command):
-    """Run a command in a virtual environment. This prefixes the run command with the source command.
-    Usage:
-        vlrun('pip install tables')
-    """
-    source = 'source %(project_dir)s/bin/activate && source %(project_dir)s/environment.bashrc && ' % env
-    return lrun(source + command)    
-
-def _make_dir(path):
-    with settings(warn_only=True):
-        if lrun("test -d %s" % path).failed:
-            lrun("mkdir -p %s" % path)
-            
-def _get_expected_file(url):
-    tar_file = os.path.split(url)[-1]
-    safe_tar = "--pax-option='delete=SCHILY.*,delete=LIBARCHIVE.*'"
-    exts = {(".tar.gz", ".tgz") : "tar %s -xzpf" % safe_tar,
-            (".tar.bz2",): "tar %s -xjpf" % safe_tar,
-            (".zip",) : "unzip"}
-    for ext_choices, tar_cmd in exts.iteritems():
-        for ext in ext_choices:
-            if tar_file.endswith(ext):
-                return tar_file, tar_file[:-len(ext)], tar_cmd
-    raise ValueError("Did not find extract command for %s" % url)
-                    
-def _safe_dir_name(path, dir_name, need_dir=True):
-    replace_try = ["", "-src", "_core"]
-    for replace in replace_try:
-        check = dir_name.replace(replace, "")
-        if lexists(os.path.join(path, check)):
-            return check
-        # still couldn't find it, it's a nasty one
-        for check_part in (dir_name.split("-")[0].split("_")[0],
-                           dir_name.split("-")[-1].split("_")[-1],
-                           dir_name.split(".")[0]):
-            with settings(hide('warnings', 'running', 'stdout', 'stderr'),
-                          warn_only=True):
-                dirs = lrun("ls -d1 %s/*%s*/" % (path, check_part)).split("\n")
-                dirs = [x for x in dirs if "cannot access" not in x and "No such" not in x]
-                if len(dirs) == 1:
-                    return dirs[0]
-                if need_dir:
-                    raise ValueError("Could not find directory %s" % dir_name)
-
-def _fetch_and_unpack(path, url, need_dir=True):
-    if url.startswith(("git", "svn", "hg", "cvs")):
-        lrun(url)
-        base = os.path.basename(url.split()[-1])
-        return os.path.splitext(base)[0]
-    else:
-        tar_file, dir_name, tar_cmd = _get_expected_file(url)
-        if not lexists(tar_file):
-            lrun("wget --no-check-certificate %s" % url)
-            lrun("%s %s" % (tar_cmd, tar_file))
-        return _safe_dir_name(path, dir_name, need_dir)
-                                                                    
-def _configure_make(env, options=None):
-    if options:
-        lrun("./configure --disable-werror --prefix=%s %s" % (env.project_dir, options))
-    else:
-        lrun("./configure --disable-werror --prefix=%s" % (env.project_dir))
-    lrun("make")
-    lrun("make install")
-
-def _python_build(env, option=None):
-    vlrun("python setup.py install")
-    
-def _get_install(url, env, make_command, make_options=None):
-    """Retrieve source from a URL and install in our system directory.
-    """
-    with lcd(env.tmp_dir):
-        dir_name = _fetch_and_unpack(env.tmp_dir, url)
-        with lcd(dir_name):
-            make_command(env, make_options)
-                                                                        
