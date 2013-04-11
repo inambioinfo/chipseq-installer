@@ -64,8 +64,8 @@ def local():
 def deploy_chipseq():
     """Deploy chipseq pipeline and install dependencies
     """
-    install_dependencies()
     setup_environment()
+    install_dependencies()
     install_chipseq()
 
 # ================================================================================
