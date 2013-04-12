@@ -264,7 +264,7 @@ def install_r_libraries():
     options(repos=cran.repos)
     source("%s")
     """ % (config["cranrepo"], config["biocrepo"])
-    append(out_file, repo_info)
+    lrun("echo %s >> %s" % (repo_info, out_file))
     install_fn = """
     repo.installer <- function(repos, install.fn) {
       update.or.install <- function(pname) {
