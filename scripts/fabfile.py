@@ -264,7 +264,7 @@ def install_r_libraries():
     options(repos=cran.repos)
     source("%s")
     """ % (config["cranrepo"], config["biocrepo"])
-    append(repo_info, out_file)
+    append(out_file, repo_info)
     install_fn = """
     repo.installer <- function(repos, install.fn) {
       update.or.install <- function(pname) {
@@ -275,13 +275,13 @@ def install_r_libraries():
       }
     }
     """ % env
-    append(install_fn, out_file)
+    append(out_file, install_fn)
     bioc_install = """
     bioc.pkgs <- c(%s)
     bioc.installer = repo.installer(biocinstallRepos(), biocLite)
     lapply(bioc.pkgs, bioc.installer)
     """ % (", ".join('"%s"' % p for p in config))
-    append(bioc_install, out_file)
+    append(out_file, bioc_install)
     std_install = """
     std.pkgs <- c(%s)
     std.installer = repo.installer(cran.repos, install.packages)
@@ -301,7 +301,7 @@ def install_r_libraries():
     update.packages(ask=FALSE)
     install.packages("GenometriCorr",repos="http://genometricorr.sourceforge.net/R/",type="source", lib=%(r_lib_dir)s)
     """ % env
-    append(final_update, out_file)
+    append(out_file, final_update)
     # Run the script and then get rid of it
     #vlrun("Rscript %s" % out_file)
     #lrun("rm -f %s" % out_file)
