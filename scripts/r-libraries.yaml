@@ -32,8 +32,6 @@ cran:
  - cluster
  - gridSVG
  - tractor.base
-    
-
 biocrepo: http://bioconductor.org/biocLite.R
 bioc:
  - Biobase
@@ -68,4 +66,3 @@ bioc:
  - triform
  - SVGAnnotation
  - preprocessCore
- 

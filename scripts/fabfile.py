@@ -257,14 +257,15 @@ def install_r_libraries():
     out_file = "install_packages.R"
     if lexists(out_file):
         lrun("rm -f %s" % out_file)
-    lrun("touch %s" % out_file)
+    run("touch %s" % out_file)
+    append(config, out_file)
     repo_info = """
     cran.repos <- getOption("repos")
     cran.repos["CRAN" ] <- "%s"
     options(repos=cran.repos)
     source("%s")
     """ % (config["cranrepo"], config["biocrepo"])
-    lrun("echo '%s' >> %s" % (repo_info, out_file))
+    append(repo_info, out_file)
     install_fn = """
     repo.installer <- function(repos, install.fn) {
       update.or.install <- function(pname) {
@@ -275,7 +276,7 @@ def install_r_libraries():
       }
     }
     """ % env
-    lrun("echo '%s' >> %s" % (install_fn, out_file))
+    append(install_fn, out_file)
     bioc_install = """
     bioc.pkgs <- c(%s)
     bioc.installer = repo.installer(biocinstallRepos(), biocLite)
@@ -301,7 +302,7 @@ def install_r_libraries():
     update.packages(ask=FALSE)
     install.packages("GenometriCorr",repos="http://genometricorr.sourceforge.net/R/",type="source", lib=%(r_lib_dir)s)
     """ % env
-    lrun("echo '%s' >> %s" % (final_update, out_file)) 
+    append(final_update, out_file)
     # Run the script and then get rid of it
     #vlrun("Rscript %s" % out_file)
     #lrun("rm -f %s" % out_file)
