@@ -282,7 +282,7 @@ def install_r_libraries():
     bioc.installer = repo.installer(biocinstallRepos(), biocLite)
     lapply(bioc.pkgs, bioc.installer)
     """ % (", ".join('"%s"' % p for p in config))
-    lrun("echo '%s' >> %s" % (bioc_install, out_file))    
+    append(bioc_install, out_file)
     std_install = """
     std.pkgs <- c(%s)
     std.installer = repo.installer(cran.repos, install.packages)
