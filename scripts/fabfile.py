@@ -275,33 +275,33 @@ def install_r_libraries():
       }
     }
     """ % env
-    append(out_file, install_fn)
+    lrun("echo %s >> %s" % (install_fn, out_file))
     bioc_install = """
     bioc.pkgs <- c(%s)
     bioc.installer = repo.installer(biocinstallRepos(), biocLite)
     lapply(bioc.pkgs, bioc.installer)
     """ % (", ".join('"%s"' % p for p in config))
-    append(out_file, bioc_install)
+    lrun("echo %s >> %s" % (bioc_install, out_file))
     std_install = """
     std.pkgs <- c(%s)
     std.installer = repo.installer(cran.repos, install.packages)
     lapply(std.pkgs, std.installer)
     """ % (", ".join('"%s"' % p for p in config['cran']))
-    append(out_file, std_install)
+    lrun("echo %s >> %s" % (std_install, out_file))
     if len(config.get("bioc", [])) > 0:
         bioc_install = """
     bioc.pkgs <- c(%s)
     bioc.installer = repo.installer(biocinstallRepos(), biocLite)
     lapply(bioc.pkgs, bioc.installer)
     """ % (", ".join('"%s"' % p for p in config['bioc']))
-        append(out_file, bioc_install)
+        lrun("echo %s >> %s" % (bioc_install, out_file))
     
     final_update = """
     update.packages(repos=biocinstallRepos(), ask=FALSE, instlib=%(r_lib_dir)s)
     update.packages(ask=FALSE)
     install.packages("GenometriCorr",repos="http://genometricorr.sourceforge.net/R/",type="source", lib=%(r_lib_dir)s)
     """ % env
-    append(out_file, final_update)
+    lrun("echo %s >> %s" % (final_update, out_file))
     # Run the script and then get rid of it
     #vlrun("Rscript %s" % out_file)
     #lrun("rm -f %s" % out_file)
