@@ -269,7 +269,7 @@ def install_r_libraries():
     install_fn = """
     repo.installer <- function(repos, install.fn) {
       update.or.install <- function(pname) {
-        if (pname %in% installed.packages())
+        if (pname %%in%% installed.packages())
           update.packages(lib.loc=c(pname), repos=repos, ask=FALSE)
         else
           install.fn(pname, lib=%(r_libinstall_dir)s)
@@ -282,16 +282,7 @@ def install_r_libraries():
     bioc.installer = repo.installer(biocinstallRepos(), biocLite)
     lapply(bioc.pkgs, bioc.installer)
     """ % (", ".join('"%s"' % p for p in r_lib))
-    lrun("echo '%s' >> %s" % (bioc_install, out_file))
-    
-    
-#    cran_install = """
-#    cran.pkgs <- c(%s)
-#    cran.installer = repo.installer(biocinstallRepos(), install.packages)
-#    lapply(cran.pkgs, cran.installer)
-#    """ % (", ".join('"%s"' % p for p in r_lib))
-#    lrun("echo '%s' >> %s" % (cran_install, out_file))
-    
+    lrun("echo '%s' >> %s" % (bioc_install, out_file))    
     std_install = """
     std.pkgs <- c(%s)
     std.installer = repo.installer(cran.repos, install.packages)
@@ -307,9 +298,9 @@ def install_r_libraries():
         append(out_file, bioc_install)
     
     final_update = """
-    update.packages(repos=biocinstallRepos(), ask=FALSE,instlib=%(r_libinstall_dir)s)
-
-    install.packages("GenometriCorr",repos="http://genometricorr.sourceforge.net/R/",type="source",lib=%(r_libinstall_dir)s)
+    update.packages(repos=biocinstallRepos(), ask=FALSE, instlib=%(r_libinstall_dir)s)
+    update.packages(ask=FALSE)
+    install.packages("GenometriCorr",repos="http://genometricorr.sourceforge.net/R/",type="source", lib=%(r_libinstall_dir)s)
     """ % env
     lrun("echo '%s' >> %s" % (final_update, out_file)) 
     # Run the script and then get rid of it
