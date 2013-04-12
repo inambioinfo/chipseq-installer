@@ -257,7 +257,7 @@ def install_r_libraries():
     out_file = "install_packages.R"
     if lexists(out_file):
         lrun("rm -f %s" % out_file)
-    run("touch %s" % out_file)
+    lrun("touch %s" % out_file)
     append(config, out_file)
     repo_info = """
     cran.repos <- getOption("repos")
