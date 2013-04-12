@@ -1,36 +1,71 @@
 ---
 # Configuration file defining R specific libraries that are installed
-# via Bioconductor.
-# metabric dependencies: hwriter, GenomeGraphs, illuminaHumanv3.db
-# GenometriCorr dependencies: IRanges, GenomicRanges, gplots, rtracklayer
- - amap
- - beeswarm
- - Biobase
- - car
- - caTools
- - ddCt
- - gdata
- - GenomeGraphs
- - GenomicRanges
- - gplots
+# via via CRAN and Bioconductor.
+cranrepo: http://watson.nci.nih.gov/cran_mirror/
+cran:
  - ggplot2
- - graphics
- - grid
- - gtools
- - heatmap.plus
- - hgu133a.db
- - hgu133plus2.db
- - hwriter
- - illuminaHumanv3.db
- - IRanges
- - kernlab
- - multicore
- - org.Hs.eg.db
- - party
- - PropCIs
- - R2HTML
- - RColorBrewer
+ - reshape2
  - reshape
+ - gplots
+ - graphics
+ - gridExtra
+ - Hmisc
+ - hwriter
+ - itertools
+ - lattice
+ - latticeExtra
+ - plyr
+ - R2HTML
+ - raster
+ - RColorBrewer
+ - RCurl
+ - RJSONIO
+ - RSQLite
+ - R.utils
+ - sp
+ - statmod
+ - stats
+ - stringr
+ - XML
+ - xtable
+ - class
+ - cluster
+ - gridSVG
+ - tractor.base
+    
+
+biocrepo: http://bioconductor.org/biocLite.R
+bioc:
+ - Biobase
+ - BiocGenerics
+ - BiocInstaller
+ - biomaRt
+ - Biostrings
+ - biovizBase
+ - Category
+ - ChIPpeakAnno
+ - chipseq
+ - chron
+ - DESeq
+ - DiffBind
+ - GEOquery
+ - edgeR
+ - GenomicFeatures
+ - GenomicRanges
+ - GO.db
+ - googleVis
+ - GSEABase
+ - htSeqTools
+ - IRanges
+ - multtest
+ - Rsamtools
  - rtracklayer
- - survival
- - yacca
+ - seqLogo
+ - snow
+ - snowfall
+ - VariantAnnotation
+ - zlibbioc
+ - triform
+ - SVGAnnotation
+ - preprocessCore
+ 

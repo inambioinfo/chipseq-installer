@@ -260,8 +260,11 @@ def install_r_libraries():
         lrun("rm -f %s" % out_file)
     lrun("touch %s" % out_file)
     repo_info = """
-    source("http://bioconductor.org/biocLite.R")
-    """
+    cran.repos <- getOption("repos")
+    cran.repos["CRAN" ] <- "%s"
+    options(repos=cran.repos)
+    source("%s")
+    """ % (r_lib["cranrepo"], r_lib["biocrepo"])
     lrun("echo '%s' >> %s" % (repo_info, out_file))
     install_fn = """
     repo.installer <- function(repos, install.fn) {
@@ -289,6 +292,20 @@ def install_r_libraries():
 #    """ % (", ".join('"%s"' % p for p in r_lib))
 #    lrun("echo '%s' >> %s" % (cran_install, out_file))
     
+    std_install = """
+    std.pkgs <- c(%s)
+    std.installer = repo.installer(cran.repos, install.packages)
+    lapply(std.pkgs, std.installer)
+    """ % (", ".join('"%s"' % p for p in config['cran']))
+    append(out_file, std_install)
+    if len(config.get("bioc", [])) > 0:
+        bioc_install = """
+    bioc.pkgs <- c(%s)
+    bioc.installer = repo.installer(biocinstallRepos(), biocLite)
+    lapply(bioc.pkgs, bioc.installer)
+    """ % (", ".join('"%s"' % p for p in config['bioc']))
+        append(out_file, bioc_install)
+    
     final_update = """
     update.packages(repos=biocinstallRepos(), ask=FALSE,instlib=%(r_libinstall_dir)s)
 
@@ -298,10 +315,6 @@ def install_r_libraries():
     # Run the script and then get rid of it
     #vlrun("Rscript %s" % out_file)
     #lrun("rm -f %s" % out_file)
-    # Install metabric dependencies
-    #with lcd(env.tmp_dir):
-    #    lrun("wget http://cran.r-project.org/src/contrib/RMySQL_0.9-3.tar.gz")
-    #    vlrun("R CMD INSTALL --configure-args='--with-mysql-dir=/opt/local/server/database/mysql/' RMySQL_0.9-3.tar.gz")    
 
 def install_ucsc_tools():
     """Install useful executables from UCSC.
