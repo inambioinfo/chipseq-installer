@@ -255,7 +255,7 @@ def install_r_libraries():
     config = yaml.load(config_file)
     # Create an Rscript file with install details.
     out_file = "install_packages.R"
-    if lexists(out_file):
+    if exists(out_file):
         run("rm -f %s" % out_file)
     run("touch %s" % out_file)
     repo_info = """
