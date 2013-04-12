@@ -255,9 +255,9 @@ def install_r_libraries():
     config = yaml.load(config_file)
     # Create an Rscript file with install details.
     out_file = "install_packages.R"
-    if exists(out_file):
-        run("rm -f %s" % out_file)
-    run("touch %s" % out_file)
+    if lexists(out_file):
+        lrun("rm -f %s" % out_file)
+    lrun("touch %s" % out_file)
     repo_info = """
     cran.repos <- getOption("repos")
     cran.repos["CRAN" ] <- "%s"
