@@ -44,8 +44,7 @@ env.project_dir = os.getcwd()
 env.tmp_dir = os.path.join(env.project_dir, 'tmp')
 env.bin_dir = os.path.join(env.project_dir, 'bin')
 env.lib_dir = os.path.join(env.project_dir, 'lib')
-env.r_lib_dir = os.path.join(env.project_dir, 'lib64/R/lib')
-env.r_libinstall_dir = os.path.join(env.project_dir, 'lib64/R/library')
+env.r_lib_dir = os.path.join(env.project_dir, 'lib64/R/library')
 env.chipseq_build_path = os.path.join(env.project_dir, 'chipseq-build')
 env.chipseq_path = os.path.join(env.project_dir, 'Process10')
 env.use_sudo = False
@@ -252,8 +251,8 @@ def install_r_libraries():
     plus GenometriCorr & RMySQL_0.9-3
     """
     # Load list of R libraries to install
-    r_lib_stream = open(os.path.join(env.chipseq_build_path, "scripts/r-libraries.yaml"), 'r')
-    r_lib = yaml.load(r_lib_stream)
+    config_file = open(os.path.join(env.chipseq_build_path, "scripts/r-libraries.yaml"), 'r')
+    config = yaml.load(config_file)
     # Create an Rscript file with install details.
     out_file = "install_packages.R"
     if lexists(out_file):
@@ -264,7 +263,7 @@ def install_r_libraries():
     cran.repos["CRAN" ] <- "%s"
     options(repos=cran.repos)
     source("%s")
-    """ % (r_lib["cranrepo"], r_lib["biocrepo"])
+    """ % (config["cranrepo"], config["biocrepo"])
     lrun("echo '%s' >> %s" % (repo_info, out_file))
     install_fn = """
     repo.installer <- function(repos, install.fn) {
@@ -272,7 +271,7 @@ def install_r_libraries():
         if (pname %%in%% installed.packages())
           update.packages(lib.loc=c(pname), repos=repos, ask=FALSE)
         else
-          install.fn(pname, lib=%(r_libinstall_dir)s)
+          install.fn(pname, lib=%(r_lib_dir)s)
       }
     }
     """ % env
@@ -281,7 +280,7 @@ def install_r_libraries():
     bioc.pkgs <- c(%s)
     bioc.installer = repo.installer(biocinstallRepos(), biocLite)
     lapply(bioc.pkgs, bioc.installer)
-    """ % (", ".join('"%s"' % p for p in r_lib))
+    """ % (", ".join('"%s"' % p for p in config))
     lrun("echo '%s' >> %s" % (bioc_install, out_file))    
     std_install = """
     std.pkgs <- c(%s)
@@ -298,9 +297,9 @@ def install_r_libraries():
         append(out_file, bioc_install)
     
     final_update = """
-    update.packages(repos=biocinstallRepos(), ask=FALSE, instlib=%(r_libinstall_dir)s)
+    update.packages(repos=biocinstallRepos(), ask=FALSE, instlib=%(r_lib_dir)s)
     update.packages(ask=FALSE)
-    install.packages("GenometriCorr",repos="http://genometricorr.sourceforge.net/R/",type="source", lib=%(r_libinstall_dir)s)
+    install.packages("GenometriCorr",repos="http://genometricorr.sourceforge.net/R/",type="source", lib=%(r_lib_dir)s)
     """ % env
     lrun("echo '%s' >> %s" % (final_update, out_file)) 
     # Run the script and then get rid of it
