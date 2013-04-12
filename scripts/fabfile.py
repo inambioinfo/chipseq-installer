@@ -271,7 +271,7 @@ def install_r_libraries():
         if (pname %%in%% installed.packages())
           update.packages(lib.loc=c(pname), repos=repos, ask=FALSE)
         else
-          install.fn(pname, lib=%(r_lib_dir)s)
+          install.fn(pname, lib=\"%(r_lib_dir)s\")
       }
     }
     """ % env
@@ -297,9 +297,9 @@ def install_r_libraries():
         lrun("echo '%s' >> %s" % (bioc_install, out_file))
     
     final_update = """
-    update.packages(repos=biocinstallRepos(), ask=FALSE, instlib=%(r_lib_dir)s)
+    update.packages(repos=biocinstallRepos(), ask=FALSE, instlib=\"%(r_lib_dir)s\")
     update.packages(ask=FALSE)
-    install.packages("GenometriCorr",repos="http://genometricorr.sourceforge.net/R/",type="source", lib=%(r_lib_dir)s)
+    install.packages("GenometriCorr",repos="http://genometricorr.sourceforge.net/R/",type="source", lib=\"%(r_lib_dir)s\")
     """ % env
     lrun("echo '%s' >> %s" % (final_update, out_file))
     # Run the script and then get rid of it
