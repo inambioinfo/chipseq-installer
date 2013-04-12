@@ -259,10 +259,10 @@ def install_r_libraries():
         lrun("rm -f %s" % out_file)
     lrun("touch %s" % out_file)
     repo_info = """
-    cran.repos <- getOption("repos")
-    cran.repos["CRAN" ] <- "%s"
+    cran.repos <- getOption(\"repos\")
+    cran.repos[\"CRAN\" ] <- \"%s\"
     options(repos=cran.repos)
-    source("%s")
+    source(\"%s\")
     """ % (config["cranrepo"], config["biocrepo"])
     lrun("echo %s >> %s" % (repo_info, out_file))
     install_fn = """
