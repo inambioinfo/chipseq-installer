@@ -45,6 +45,7 @@ env.tmp_dir = os.path.join(env.project_dir, 'tmp')
 env.bin_dir = os.path.join(env.project_dir, 'bin')
 env.lib_dir = os.path.join(env.project_dir, 'lib')
 env.r_lib_dir = os.path.join(env.project_dir, 'lib64/R/lib')
+env.r_libinstall_dir = os.path.join(env.project_dir, 'lib64/R/library')
 env.chipseq_build_path = os.path.join(env.project_dir, 'chipseq-build')
 env.chipseq_path = os.path.join(env.project_dir, 'Process10')
 env.use_sudo = False
@@ -268,10 +269,10 @@ def install_r_libraries():
         if (pname %in% installed.packages())
           update.packages(lib.loc=c(pname), repos=repos, ask=FALSE)
         else
-          install.fn(pname)
+          install.fn(pname, lib=%(r_libinstall_dir)s)
       }
     }
-    """
+    """ % env
     lrun("echo '%s' >> %s" % (install_fn, out_file))
     bioc_install = """
     bioc.pkgs <- c(%s)
@@ -286,8 +287,8 @@ def install_r_libraries():
     """
     lrun("echo '%s' >> %s" % (final_update, out_file)) 
     # Run the script and then get rid of it
-    vlrun("Rscript %s" % out_file)
-    lrun("rm -f %s" % out_file)
+    #vlrun("Rscript %s" % out_file)
+    #lrun("rm -f %s" % out_file)
     # Install metabric dependencies
     #with lcd(env.tmp_dir):
     #    lrun("wget http://cran.r-project.org/src/contrib/RMySQL_0.9-3.tar.gz")
