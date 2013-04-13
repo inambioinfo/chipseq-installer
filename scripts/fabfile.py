@@ -303,8 +303,8 @@ def install_r_libraries():
     """ % env
     lrun("echo '%s' >> %s" % (final_update, out_file))
     # Run the script and then get rid of it
-    #vlrun("Rscript %s" % out_file)
-    #lrun("rm -f %s" % out_file)
+    vlrun("Rscript %s" % out_file)
+    lrun("rm -f %s" % out_file)
 
 def install_ucsc_tools():
     """Install useful executables from UCSC.
