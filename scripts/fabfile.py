@@ -298,7 +298,7 @@ def install_r_libraries():
     
     final_update = """
     update.packages(repos=biocinstallRepos(), ask=FALSE, instlib=\"%(r_lib_dir)s\")
-    update.packages(ask=FALSE)
+    update.packages(ask=FALSE, instlib=\"%(r_lib_dir)s\")
     install.packages("GenometriCorr",repos="http://genometricorr.sourceforge.net/R/",type="source", lib=\"%(r_lib_dir)s\")
     """ % env
     lrun("echo '%s' >> %s" % (final_update, out_file))
