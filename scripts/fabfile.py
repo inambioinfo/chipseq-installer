@@ -269,9 +269,9 @@ def install_r_libraries():
     repo.installer <- function(repos, install.fn) {
       update.or.install <- function(pname) {
         if (pname %%in%% installed.packages())
-          update.packages(lib.loc=c(pname), repos=repos, ask=FALSE)
+          update.packages(lib.loc=c(pname), repos=repos, ask=FALSE,lib=\"%(r_lib_dir)s\")
         else
-          install.fn(pname, lib=\"%(r_lib_dir)s\")
+          install.fn(pname,ask=FALSE, lib=\"%(r_lib_dir)s\")
       }
     }
     """ % env
