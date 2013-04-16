@@ -12,7 +12,9 @@ export PATH=${CHIPSEQ_ROOT}/bin:${PATH}
 # Python virtualenv
 source ${CHIPSEQ_ROOT}/bin/activate
 
+export R_LIBS=${CHIPSEQ_ROOT}/lib64/R/library
+
 # LD Library path
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${CHIPSEQ_ROOT}/lib:${CHIPSEQ_ROOT}/lib64/R/lib
+export LD_LIBRARY_PATH=${CHIPSEQ_ROOT}/lib64/R/lib:${CHIPSEQ_ROOT}/lib:${LD_LIBRARY_PATH}
 # --------------------------------------------------------------------------------
 
