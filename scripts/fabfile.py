@@ -319,7 +319,7 @@ def install_ucsc_tools():
                 lrun("wget %s%s" % (url, tool))
                 lrun("chmod a+rwx %s" % tool)
 
-@_if_not_installed("samtools")
+#@_if_not_installed("samtools")
 def install_samtools():
     """Install samtools 0.1.18
     """
@@ -331,7 +331,7 @@ def install_samtools():
             # copy executables to bin
             lrun("find . -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
-@_if_not_installed("bedtools")            
+#@_if_not_installed("bedtools")            
 def install_bedtools():
     """Install BEDTools 2.17.0
     """
