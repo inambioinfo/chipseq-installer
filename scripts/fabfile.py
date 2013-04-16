@@ -160,9 +160,9 @@ def _fetch_and_unpack(path, url, need_dir=True):
 
 def _configure_make(env, options=None):
     if options:
-        lrun("./configure --disable-werror --prefix=%s %s" % (env.project_dir, options))
+        lrun("./configure --disable-error --prefix=%s %s" % (env.project_dir, options))
     else:
-        lrun("./configure --disable-werror --prefix=%s" % (env.project_dir))
+        lrun("./configure --disable-error --prefix=%s" % (env.project_dir))
     lrun("make")
     lrun("make install")
 
