@@ -177,6 +177,18 @@ def _get_install(url, env, make_command, make_options=None):
         with lcd(dir_name):
             make_command(env, make_options)
 
+def _make_copy(find_cmd=None, premake_cmd=None, do_make=True):
+    def _do_work(env,options=None):
+        if premake_cmd:
+            premake_cmd()
+        if do_make:
+            lrun("make")
+        if find_cmd:
+            install_dir = env.bin_dir
+            for fname in lrun(find_cmd).split("\n"):
+		print fname
+		lrun("cp -rf %s %s" % (fname.rstrip("\r"), install_dir))
+    return _do_work
 
 # ================================================================================
 # == Required dependencies
@@ -212,6 +224,8 @@ def install_python_libraries():
     vlrun("pip install numexpr")
     vlrun("pip install pyyaml")
     vlrun("pip install rpy2")
+    vlrun("pip install pysam")
+    vlrun("pip install scipy")
     _install_bx_python()
     _install_rpy_lib()
 
@@ -344,6 +358,7 @@ def install_bedtools():
             lrun("find bin/. -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
 
+
 # ================================================================================
 # == chipseq specific
 
@@ -366,3 +381,109 @@ def install_chipseq():
             if update:
                 lrun('svn update')
 
+def install_macs():
+    """Model-based Analysis for ChIP-Seq.
+    http://liulab.dfci.harvard.edu/MACS/
+    """
+    default_version = "1.4.2"
+    version = default_version
+    url = "https://github.com/downloads/taoliu/MACS/" \
+          "MACS-%s.tar.gz" % version
+    work_dir = env.tmp_dir
+    dir_name = _fetch_and_unpack(env.tmp_dir, url)
+    lrun("echo %s" % dir_name)
+    with lcd("MACS-1.4.2"):
+        vlrun("python setup.py install")
+    lrun("mv MACS-1.4.2 %s" % (env.bin_dir))
+    #lrun("rm -rf %s" % ("MACS-1.4.2"))
+
+
+
+def install_bwa():
+    """BWA:  aligns short nucleotide sequences against a long reference sequence.
+    http://bio-bwa.sourceforge.net/
+    """
+    version = "0.7.5a"
+    url = "http://downloads.sourceforge.net/project/bio-bwa/bwa-%s.tar.bz2" % (version)
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
+            arch = lrun("uname -m")
+            # if not 64bit, remove the appropriate flag
+            if arch.find("x86_64") == -1:
+                lrun("sed -i.bak -r -e 's/-O2 -m64/-O2/g' Makefile")
+            lrun("make")
+            # copy executables to bin
+            lrun("find . -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
+
+
+
+def install_picard():
+    version = "1.96"
+    url = 'http://downloads.sourceforge.net/project/picard/picard-tools/%s/picard-tools-%s.zip' % (version, version)
+    pkg_name = 'picard'
+    #install_dir = env.system_install
+    #install_cmd = env.safe_sudo if env.use_sudo else env.safe_run
+    install_dir = env.tmp_dir
+    #if not env.safe_exists(install_dir):
+    #lrun("mkdir -p %s" % install_dir)
+    #with _make_tmp_dir() as work_dir:
+    work_dir = env.tmp_dir
+    PicardDir = os.path.join(env.bin_dir,"picard")
+    lrun("mkdir -p %s" % PicardDir )
+    with cd(work_dir):
+        lrun("wget %s -O %s" % (url, os.path.split(url)[-1]))
+        lrun("unzip -o %s" % (os.path.split(url)[-1]))
+        lrun("mv picard-tools-%s/*.jar %s" % (version, PicardDir))
+    #_update_default(env, install_dir)
+    # set up the jars directory
+    #jar_dir = os.path.join(bin_dir, 'picard')
+    #if not env.safe_exists(jar_dir):
+    #    install_cmd("mkdir -p %s" % jar_dir)
+    #tool_dir = os.path.join(env.galaxy_tools_dir, pkg_name, 'default')
+    #install_cmd('ln --force --symbolic %s/*.jar %s/.' % (tool_dir, jar_dir))
+    #lrun('chown --recursive %s' % (PicardDir))
+
+@_if_not_installed(None)
+def install_fastx_toolkit(env):
+    version = env.tool_version
+    gtext_version = "0.6.1"
+    url_base = "http://hannonlab.cshl.edu/fastx_toolkit/"
+    fastx_url = "%sfastx_toolkit-%s.tar.bz2" % (url_base, version)
+    gtext_url = "%slibgtextutils-%s.tar.bz2" % (url_base, gtext_version)
+    pkg_name = 'fastx_toolkit'
+    install_dir = os.path.join(env.galaxy_tools_dir, pkg_name, version)
+    with _make_tmp_dir() as work_dir:
+        with cd(work_dir):
+            env.safe_run("wget %s" % gtext_url)
+            env.safe_run("tar -xjvpf %s" % (os.path.split(gtext_url)[-1]))
+            install_cmd = env.safe_sudo if env.use_sudo else env.safe_run
+            with cd("libgtextutils-%s" % gtext_version):
+                env.safe_run("./configure --prefix=%s" % (install_dir))
+                env.safe_run("make")
+                install_cmd("make install")
+            env.safe_run("wget %s" % fastx_url)
+            env.safe_run("tar -xjvpf %s" % os.path.split(fastx_url)[-1])
+            with cd("fastx_toolkit-%s" % version):
+                env.safe_run("export PKG_CONFIG_PATH=%s/lib/pkgconfig; ./configure --prefix=%s" % (install_dir, install_dir))
+                env.safe_run("make")
+                install_cmd("make install")
+    
+    
+    @_if_not_installed("fastqc")
+    def install_fastqc(env):
+        """ This tool is installed in Galaxy's jars dir """
+        version = env.tool_version
+        url = 'http://www.bioinformatics.bbsrc.ac.uk/projects/fastqc/fastqc_v%s.zip' % version
+        pkg_name = 'FastQC'
+        install_dir = os.path.join(env.galaxy_jars_dir)
+        install_cmd = env.safe_sudo if env.use_sudo else env.safe_run
+        if not env.safe_exists(install_dir):
+            install_cmd("mkdir -p %s" % install_dir)
+        with cd(install_dir):
+            install_cmd("wget %s -O %s" % (url, os.path.split(url)[-1]))
+            install_cmd("unzip -u %s" % (os.path.split(url)[-1]))
+            install_cmd("rm %s" % (os.path.split(url)[-1]))
+            with cd(pkg_name):
+                install_cmd('chmod 755 fastqc')
+            install_cmd('chown --recursive %s:%s %s' % (env.galaxy_user, env.galaxy_user, pkg_name))
