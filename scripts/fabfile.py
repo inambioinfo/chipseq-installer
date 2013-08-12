@@ -417,7 +417,30 @@ def install_bwa():
             lrun("find . -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
 
+def install_meme():
+    """BWA:  aligns short nucleotide sequences against a long reference sequence.
+    http://bio-bwa.sourceforge.net/
+    """
+    majorversion = "4.9.0"
+    minorversion = "4"
+    version  = majorversion+"_"+minorversion
+    url = "http://ebi.edu.au/ftp/software/MEME/%s/meme_%s.tar.gz" % (majorversion,version)
+    memetmp = os.path.join(env.tmp_dir,"meme"+"_"+majorversion)
+    memebin = os.path.join(env.bin_dir,"meme"+"_"+majorversion)
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(memetmp):
+           lrun("./configure --prefix=%s --with-url='http://meme.nbcr.net/meme'" % (memebin))
+           lrun("make")
+           lrun("make install")      
+           
+def install_sicer():
+       url = "http://home.gwu.edu/~wpeng/SICER_V1.1.tgz"
+       with lcd(env.tmp_dir):
+          dir_name = _fetch_and_unpack(env.tmp_dir, url)
+          lrun("mv SICER_V1.1 %s" % (env.bin_dir))          
 
+       
 def install_picard():
     version = "1.96"
     url = 'http://downloads.sourceforge.net/project/picard/picard-tools/%s/picard-tools-%s.zip' % (version, version)
