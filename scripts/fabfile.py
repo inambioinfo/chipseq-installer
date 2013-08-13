@@ -338,6 +338,35 @@ def install_ucsc_tools():
                 lrun("wget %s%s" % (url, tool))
                 lrun("chmod a+rwx %s" % tool)
 
+def install_perl():
+    """Install perl
+    """
+    url = "http://www.cpan.org/src/5.0/perl-5.18.0.tar.gz"
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        #with lcd(dir_name):
+            #lrun("make")
+            # copy executables to bin
+            #lrun("find . -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
+
+def install_maven():
+    url = "http://mirror.gopotato.co.uk/apache/maven/maven-3/3.1.0/binaries/apache-maven-3.1.0-bin.tar.gz"
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        
+
+
+def install_workflow():
+    """Checkout the latest chipseq code from svn repository and update.
+    """
+	mvnToUse = os.path.join(env.bin_dir,"apache-maven-3.1.0","bin","mvn")
+	with lcd(env.tmp_dir):
+              lrun('svn co  svn+ssh://carrol09@uk-cri-lbio01/data/mib-cri/SVNREP/workflow/trunk/ Workflow1.4')
+              with lcd("Workflow1.4"):              
+                    lrun('%s clean install' % (mvnToUse))
+
+    
+
 #@_if_not_installed("samtools")
 def install_samtools():
     """Install samtools 0.1.18
@@ -382,10 +411,11 @@ def install_chipseq():
         if not lexists(env.chipseq_path):
             update = False
             with lcd(os.path.split(env.chipseq_path)[0]):
-                lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/Process10')
+                lrun('svn co  svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH05')
         with lcd(env.chipseq_path):
             if update:
                 lrun('svn update')
+
 
 def install_macs():
     """Model-based Analysis for ChIP-Seq.
