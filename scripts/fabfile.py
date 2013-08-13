@@ -219,6 +219,9 @@ def install_dependencies():
     install_macs()
     install_meme()
     install_sicer()
+    install_maven()
+    install_workflow()
+    install_perl()
 
 def install_python_libraries():
     """Install Python libraries
@@ -344,8 +347,13 @@ def install_perl():
     url = "http://www.cpan.org/src/5.0/perl-5.18.0.tar.gz"
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
-        #with lcd(dir_name):
-            #lrun("make")
+        install_dir = os.path.join(env.bin_dir,"perl-5.18.0")
+        tmp_perl = os.path.join(env.tmp_dir,"perl-5.18.0")
+        lrun("mkdir -p %s" % install_dir)
+        with lcd(tmp_perl):
+            lrun("sh Configure -de -Dprefix='%s'" % (install_dir))
+            lrun("make")
+            lrun("make install")
             # copy executables to bin
             #lrun("find . -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
@@ -353,17 +361,18 @@ def install_maven():
     url = "http://mirror.gopotato.co.uk/apache/maven/maven-3/3.1.0/binaries/apache-maven-3.1.0-bin.tar.gz"
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        lrun("mv apache-maven-3.1.0 %s" % (env.bin_dir))
         
 
 
 def install_workflow():
     """Checkout the latest chipseq code from svn repository and update.
     """
-	mvnToUse = os.path.join(env.bin_dir,"apache-maven-3.1.0","bin","mvn")
-	with lcd(env.tmp_dir):
-              lrun('svn co  svn+ssh://carrol09@uk-cri-lbio01/data/mib-cri/SVNREP/workflow/trunk/ Workflow1.4')
-              with lcd("Workflow1.4"):              
-                    lrun('%s clean install' % (mvnToUse))
+    mvnToUse = os.path.join(env.bin_dir,"apache-maven-3.1.0","bin","mvn")
+    with lcd(env.tmp_dir):
+         lrun('svn co  svn+ssh://carrol09@uk-cri-lbio01/data/mib-cri/SVNREP/workflow/trunk/ Workflow1.4')
+         with lcd("Workflow1.4"):              
+             lrun('%s clean install' % (mvnToUse))
 
     
 
