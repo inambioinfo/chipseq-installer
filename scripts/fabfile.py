@@ -214,6 +214,11 @@ def install_dependencies():
     install_ucsc_tools()
     install_samtools()
     install_bedtools()
+    install_picard()    
+    install_bwa()
+    install_macs()
+    install_meme()
+    install_sicer()
 
 def install_python_libraries():
     """Install Python libraries
