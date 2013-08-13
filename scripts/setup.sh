@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # variables
 PYTHON_PATH=/home/mib-cri/software/python2.7/bin
 PROJECT_ROOT=`pwd`
