@@ -14,6 +14,8 @@ source ${CHIPSEQ_ROOT}/bin/activate
 
 export R_LIBS=${CHIPSEQ_ROOT}/lib64/R/library
 
+export PYTHONPATH=
+
 # LD Library path
 export LD_LIBRARY_PATH=${CHIPSEQ_ROOT}/lib64/R/lib:${CHIPSEQ_ROOT}/lib:${LD_LIBRARY_PATH}
 # --------------------------------------------------------------------------------
