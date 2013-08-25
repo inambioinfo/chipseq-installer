@@ -259,7 +259,7 @@ def _install_rpy_lib():
 def install_r():
     """Install R 2.15.2
     """
-    url = "http://cran.ma.imperial.ac.uk/src/base/R-2/R-2.15.2.tar.gz"
+    url = "http://cran.r-project.org/src/base/R-2/R-2.15.0.tar.gz"
     option = "--enable-R-shlib"
     if not lexists(os.path.join(env.r_dir, "bin/R")):
         _get_install(url, env, _configure_make, option)
