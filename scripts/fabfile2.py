@@ -300,16 +300,22 @@ def install_r_libraries():
     #lrun("echo '%s' >> %s" % (install_fn, out_file))
     bioc_install = """
     bioc.pkgs <- c(%s)
+
+    """ % (", ".join('"%s"' % p for p in config))
+    bioc_install2 = """
     biocLite(lib=\"%(r_lib_dir)s\",lib.loc=\"%(r_lib_dir)s\",ask=F)
     biocLite(bioc.pkgs,lib=\"%(r_lib_dir)s\",lib.loc=\"%(r_lib_dir)s\",ask=F)    
-    
-    """ % (", ".join('"%s"' % p for p in config))
+    """
     lrun("echo '%s' >> %s" % (bioc_install, out_file))
+    lrun("echo '%s' >> %s" % (bioc_install2, out_file))
     std_install = """
     std.pkgs <- c(%s)
-    install.packages(std.pkgs,lib=\"%(r_lib_dir)s\")
     """ % (", ".join('"%s"' % p for p in config['cran']))
     lrun("echo '%s' >> %s" % (std_install, out_file))
+    std_install2 = """
+    install.packages(std.pkgs,lib=\"%(r_lib_dir)s\")
+    """
+    lrun("echo '%s' >> %s" % (std_install2, out_file))
     final_update = """
     download.file(\"http://compbio.med.harvard.edu/Supplements/ChIP-seq/spp_1.11.tar.gz\",\"%(env.tmp_dir)s/spp_1.11.tar.gz\")
     
@@ -317,7 +323,7 @@ def install_r_libraries():
     lrun("echo '%s' >> %s" % (final_update, out_file))
     # Run the script and then get rid of it
     vlrun("Rscript %s" % out_file)
-    lrun("rm -f %s" % out_file)
+    #lrun("rm -f %s" % out_file)
 
 def install_ucsc_tools():
     """Install useful executables from UCSC.
