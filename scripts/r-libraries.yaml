@@ -1,7 +1,7 @@
 ---
 # Configuration file defining R specific libraries that are installed
 # via via CRAN and Bioconductor.
-cranrepo: http://cran.ma.imperial.ac.uk/
+cranrepo: http://www.stats.bris.ac.uk/R
 cran:
  - ggplot2
  - reshape2
