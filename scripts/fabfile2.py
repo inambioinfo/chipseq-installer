@@ -305,7 +305,7 @@ def install_r_libraries():
     bioc_install2 = """
     biocLite(lib=\"%(r_lib_dir)s\",lib.loc=\"%(r_lib_dir)s\",ask=F)
     biocLite(bioc.pkgs,lib=\"%(r_lib_dir)s\",lib.loc=\"%(r_lib_dir)s\",ask=F)    
-    """
+    """ % env
     lrun("echo '%s' >> %s" % (bioc_install, out_file))
     lrun("echo '%s' >> %s" % (bioc_install2, out_file))
     std_install = """
@@ -314,10 +314,10 @@ def install_r_libraries():
     lrun("echo '%s' >> %s" % (std_install, out_file))
     std_install2 = """
     install.packages(std.pkgs,lib=\"%(r_lib_dir)s\")
-    """
+    """ % env
     lrun("echo '%s' >> %s" % (std_install2, out_file))
     final_update = """
-    download.file(\"http://compbio.med.harvard.edu/Supplements/ChIP-seq/spp_1.11.tar.gz\",\"%(env.tmp_dir)s/spp_1.11.tar.gz\")
+    download.file(\"http://compbio.med.harvard.edu/Supplements/ChIP-seq/spp_1.11.tar.gz\",\"%(tmp_dir)s/spp_1.11.tar.gz\")
     
     """ % env
     lrun("echo '%s' >> %s" % (final_update, out_file))
