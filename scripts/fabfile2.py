@@ -346,7 +346,7 @@ def install_perl_libraries():
     tmp_HTMLTemplate = os.path.join(env.tmp_dir,"HTML-Template-2.94")
     perl = os.path.join(env.bin_dir,"perl-5.18.0","perl")
     with lcd(env.tmp_dir):
-        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        dir_name = _fetch_and_unpack(env.tmp_dir, urlHTMLTemplate)
         with lcd(tmp_HTMLTemplate):
             lrun("%s Makefile.PL"  % (perl))
             lrun("make")
