@@ -210,6 +210,8 @@ def install_dependencies():
     """
     install_r()
     install_r_libraries()
+    #install_perl()
+    #install_perl_libraries()
     #install_python_libraries()
     #install_ucsc_tools()
     #install_samtools()
@@ -221,7 +223,6 @@ def install_dependencies():
     #install_sicer()
     #install_maven()
     #install_workflow()
-    #install_perl()
 
 def install_python_libraries():
     """Install Python libraries
@@ -337,6 +338,19 @@ def install_ucsc_tools():
             if not lexists(os.path.join(env.bin_dir, tool)):
                 lrun("wget %s%s" % (url, tool))
                 lrun("chmod a+rwx %s" % tool)
+
+def install_perl_libraries():
+    """Install RPy 1.0.3
+    """
+    urlHTMLTemplate = "http://search.cpan.org/CPAN/authors/id/W/WO/WONKO/HTML-Template-2.94.tar.gz"
+    tmp_HTMLTemplate = os.path.join(env.tmp_dir,"HTML-Template-2.94")
+    perl = os.path.join(env.bin_dir,"perl-5.18.0","perl")
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(tmp_HTMLTemplate):
+            lrun("%s Makefile.PL"  % (perl))
+            lrun("make")
+            vlrun("make install")
 
 def install_perl():
     """Install perl
