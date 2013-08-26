@@ -210,9 +210,9 @@ def install_dependencies():
     """
     install_r()
     install_r_libraries()
-    #install_perl()
-    #install_perl_libraries()
-    #install_python_libraries()
+    install_perl()
+    install_perl_libraries()
+    install_python_libraries()
     #install_ucsc_tools()
     #install_samtools()
     #install_bedtools()
