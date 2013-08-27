@@ -338,7 +338,7 @@ def install_r_libraries():
     """ % env
     lrun("echo '%s' >> %s" % (GMC_install2, out_file))       
     # Run the script and then get rid of it
-    vlrun("Rscript %s" % out_file)
+    vlrun("%s %s" % (os.path.join(env.bin_dir, "Rscript"),out_file))
     #lrun("rm -f %s" % out_file)
 
 def install_ucsc_tools():
