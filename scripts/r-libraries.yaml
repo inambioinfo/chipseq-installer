@@ -33,6 +33,7 @@ cran:
  - gridSVG
  - tractor.base
  - caTools
+ - gdata
 
 biocrepo: http://bioconductor.org/biocLite.R
 bioc:
