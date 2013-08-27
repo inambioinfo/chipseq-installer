@@ -210,9 +210,9 @@ def install_dependencies():
     """
     install_r()
     install_r_libraries()
-    install_perl()
-    install_perl_libraries()
-    install_python_libraries()
+    #install_perl()
+    #install_perl_libraries()
+    #install_python_libraries()
     #install_ucsc_tools()
     #install_samtools()
     #install_bedtools()
@@ -317,6 +317,16 @@ def install_r_libraries():
     install.packages(std.pkgs,lib=\"%(r_lib_dir)s\")
     """ % env
     lrun("echo '%s' >> %s" % (std_install2, out_file))
+    gplots_install = """
+    download.file(\"http://cran.r-project.org/src/contrib/Archive/gplots/gplots_2.10.1.tar.gz\",\"%(tmp_dir)s/gplots_2.10.1.tar.gz\")
+    
+    """ % env
+    lrun("echo '%s' >> %s" % (gplots_install, out_file))
+    gplots_install2 = """
+    install.packages(\"%(tmp_dir)s/gplots_2.10.1.tar.gz\",lib=\"%(r_lib_dir)s\")
+    """ % env
+    lrun("echo '%s' >> %s" % (gplots_install2, out_file))    
+    
     spp_install = """
     download.file(\"http://compbio.med.harvard.edu/Supplements/ChIP-seq/spp_1.11.tar.gz\",\"%(tmp_dir)s/spp_1.11.tar.gz\")
     
