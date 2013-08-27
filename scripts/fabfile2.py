@@ -302,7 +302,7 @@ def install_r_libraries():
     bioc_install = """
     bioc.pkgs <- c(%s)
 
-    """ % (", ".join('"%s"' % p for p in config))
+    """ % (", ".join('"%s"' % p for p in config['bioc']))
     bioc_install2 = """
     biocLite(lib=\"%(r_lib_dir)s\",lib.loc=\"%(r_lib_dir)s\",ask=F)
     biocLite(bioc.pkgs,lib=\"%(r_lib_dir)s\",lib.loc=\"%(r_lib_dir)s\",ask=F)    
