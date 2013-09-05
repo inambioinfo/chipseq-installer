@@ -108,7 +108,7 @@ def vlrun(command):
         vlrun('pip install tables')
     """
     source = 'source %(project_dir)s/bin/activate && source %(project_dir)s/%(env_setup)s && ' % env
-    return lrun(source + command)    
+    return lrun(source + command,shell='/bin/bash')    
 
 def _make_dir(path):
     with settings(warn_only=True):
