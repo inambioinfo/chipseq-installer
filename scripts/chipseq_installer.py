@@ -149,16 +149,11 @@ def _safe_dir_name(path, dir_name, need_dir=True):
                     raise ValueError("Could not find directory %s" % dir_name)
 
 def _fetch_and_unpack(path, url, need_dir=True):
-    if url.startswith(("git", "svn", "hg", "cvs")):
-        lrun(url)
-        base = os.path.basename(url.split()[-1])
-        return os.path.splitext(base)[0]
-    else:
-        tar_file, dir_name, tar_cmd = _get_expected_file(url)
-        if not lexists(tar_file):
-            lrun("wget --no-check-certificate %s" % url)
-            lrun("%s %s" % (tar_cmd, tar_file))
-        return _safe_dir_name(path, dir_name, need_dir)
+    tar_file, dir_name, tar_cmd = _get_expected_file(url)
+    if not lexists(tar_file):
+        lrun("wget --no-check-certificate %s" % url)
+        lrun("%s %s" % (tar_cmd, tar_file))
+    return _safe_dir_name(path, dir_name, need_dir)
 
 def _configure_make(env, options=None):
     if options:
