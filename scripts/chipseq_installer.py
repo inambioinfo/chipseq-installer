@@ -1,7 +1,7 @@
 """
 Created by Anne Pajon on 11 Apr 2013
 
-Copyright (c) 2012 Cancer Research UK - Cambridge Research Institute.
+Copyright (c) 2012 Cancer Research UK - Cambridge Institute.
 
 This source file  is licensed under the Academic  Free License version
 3.0 available at http://www.opensource.org/licenses/AFL-3.0.
@@ -27,7 +27,7 @@ Fabric  deployment file  to set  up a  local Galaxy  instance.  Fabric
 server.
 
 Usage:
-    fab -f scripts/fabfile.py local deploy_chipseq
+    fab -f scripts/chipseq_installer.py local deploy_chipseq > chipseq_installer.out
 """
 import os
 from contextlib import contextmanager
@@ -61,11 +61,13 @@ def local():
 # ================================================================================
 # == Fabric instructions
 
-def deploy_chipseq():
-    """Deploy chipseq pipeline and install dependencies
+def deploy():
+    """Setup environment, install dependencies and tools
+    and deploy chipseq pipeline
     """
     setup_environment()
     install_dependencies()
+    install_tools()
     install_chipseq()
 
 # ================================================================================
@@ -189,61 +191,45 @@ def _make_copy(find_cmd=None, premake_cmd=None, do_make=True):
 		print fname
 		lrun("cp -rf %s %s" % (fname.rstrip("\r"), install_dir))
     return _do_work
+    
+def setup_environment():
+    """Copy adhoc environment variables
+    """
+    lrun('cp %(chipseq_build_path)s/%(env_setup)s %(project_dir)s/%(env_setup)s' % env)
+    _make_dir(env.tmp_dir)
 
 # ================================================================================
-# == Required dependencies
+# == Required dependencies to install chipseq pipeline
 
 def install_dependencies():
-    """Install chipseq dependencies
-    - Python libraries: NumPy, Cython, NumExpr, PyTables, RPy, RPy2, bx-python
+    """Install chipseq dependencies:
     - R & libraries
-    - UCSC tools: liftOver, TwoBitToFa, FaToTwoBit, BedToBigBed, WigToBigWig, BedGraphToBigWig
-    - samtools
-    - BEDTools
-
-    Not yet implemented:
-    - bwa = http://sourceforge.net/projects/bio-bwa/files/latest/download?source=files
-    - picard = http://sourceforge.net/projects/picard/files/picard-tools/1.86/picard-tools-1.86.zip/download
-    - macs = https://github.com/downloads/taoliu/MACS/MACS-1.4.2-1.tar.gz
-    - meme = http://ebi.edu.au/ftp/software/MEME/4.9.0/meme_4.9.0_4.tar.gz
-    - ame = http://acb.qfab.org/acb/ame/ame-bin-linux-ubuntu910-x86.tar.gz
+    - Perl & libraries
+    - Python libraries: NumPy, Cython, NumExpr, PyTables, RPy, RPy2, bx-python
+    - Rich Bowers' workflow
     """
     install_r()
     install_r_libraries()
     install_perl()
     install_perl_libraries()
     install_python_libraries()
-    install_ucsc_tools()
-    install_samtools()
-    install_bedtools()
-    install_picard()    
-    install_bwa()
-    install_macs()
-    install_meme()
-    install_sicer()
     install_maven()
-    install_workflow()
+    #install_workflow()
 
 def install_python_libraries():
     """Install Python libraries
     """
-    vlrun("pip install fluent-logger")
-    vlrun("pip install numpy")
-    vlrun("pip install cython")
-    vlrun("pip install numexpr")
-    vlrun("pip install pyyaml")
-    vlrun("pip install rpy2")
-    vlrun("pip install https://pysam.googlecode.com/files/pysam-0.7.4.tar.gz")
-    vlrun("pip install scipy")
-    _install_bx_python()
+    vlrun("pip install fluent-logger==0.3.3")
+    vlrun("pip install nose==1.3.0")
+    vlrun("pip install numpy==1.7.1")
+    vlrun("pip install cython==0.19.2")
+    vlrun("pip install numexpr==2.2.2")
+    vlrun("pip install pyyaml==3.10")
+    vlrun("pip install rpy2==2.3.8")
+    vlrun("pip install pysam==0.7.4")
+    vlrun("pip install scipy==0.12.1")
+    vlrun("pip install bx-python==0.7.1")
     _install_rpy_lib()
-
-@_if_not_python_lib("bx")
-def _install_bx_python():
-    """Install bx-python 0.7.1
-    """
-    url = "http://pypi.python.org/packages/source/b/bx-python/bx-python-0.7.1.tar.gz"
-    vlrun("pip install %s" % url)
 
 @_if_not_python_lib("rpy")
 def _install_rpy_lib():
@@ -352,27 +338,14 @@ def install_r_libraries():
     vlrun("%s %s" % (os.path.join(env.bin_dir, "Rscript"),out_file))
     #lrun("rm -f %s" % out_file)
 
-def install_ucsc_tools():
-    """Install useful executables from UCSC.
-    see https://github.com/chapmanb/cloudbiolinux/blob/master/cloudbio/custom/bio_nextgen.py
-    for an up-to-date version
-    """
-    tools = ["liftOver", "faToTwoBit", "twoBitToFa", "bedToBigBed", "wigToBigWig", "bedGraphToBigWig"]
-    url = "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/"
-    for tool in tools:
-        with lcd(env.bin_dir):
-            if not lexists(os.path.join(env.bin_dir, tool)):
-                lrun("wget %s%s" % (url, tool))
-                lrun("chmod a+rwx %s" % tool)
-
 def install_perl_libraries():
-    """Install RPy 1.0.3
+    """Install perl library HTML Template
     """
     urlHTMLTemplate = "http://search.cpan.org/CPAN/authors/id/W/WO/WONKO/HTML-Template-2.94.tar.gz"
     perl = os.path.join(env.bin_dir,"perl-5.18.0","bin","perl")
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, urlHTMLTemplate)
-	tmp_HTMLTemplate = os.path.join(env.tmp_dir,"HTML-Template-2.94")        
+	    tmp_HTMLTemplate = os.path.join(env.tmp_dir,"HTML-Template-2.94")        
         with lcd(tmp_HTMLTemplate):
             lrun("%s Makefile.PL"  % (perl))
             lrun("make")
@@ -391,8 +364,6 @@ def install_perl():
             lrun("sh Configure -de -Dprefix='%s'" % (install_dir))
             lrun("make")
             lrun("make install")
-            # copy executables to bin
-            #lrun("find . -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
 def install_maven():
     url = "http://mirror.gopotato.co.uk/apache/maven/maven-3/3.1.0/binaries/apache-maven-3.1.0-bin.tar.gz"
@@ -400,20 +371,51 @@ def install_maven():
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
         lrun("mv apache-maven-3.1.0 %s" % (env.bin_dir))
         
-
-
 def install_workflow():
     """Checkout the latest chipseq code from svn repository and update.
     """
     mvnToUse = os.path.join(env.bin_dir,"apache-maven-3.1.0","bin","mvn")
     with lcd(env.tmp_dir):
-         lrun('svn co  svn+ssh://carrol09@uk-cri-lbio01/data/mib-cri/SVNREP/workflow/trunk/ Workflow1.4')
+         lrun('svn co  svn://uk-cri-lbio01/workflow/trunk/ Workflow1.4')
          with lcd("Workflow1.4"):              
              lrun('%s clean install' % (mvnToUse))
 
-    
+# ================================================================================
+# == Required specific tools to install chipseq pipeline
 
-#@_if_not_installed("samtools")
+def install_tools():
+    """Install chipseq specific tools:
+    - UCSC tools: liftOver, TwoBitToFa, FaToTwoBit, BedToBigBed, WigToBigWig, BedGraphToBigWig
+    - samtools
+    - BEDTools
+    - picard
+    - bwa
+    - macs
+    - meme
+    - sicer
+    """
+    install_ucsc_tools()
+    install_samtools()
+    install_bedtools()
+    install_picard()    
+    install_bwa()
+    install_macs()
+    install_meme()
+    install_sicer()
+
+def install_ucsc_tools():
+    """Install useful executables from UCSC.
+    see https://github.com/chapmanb/cloudbiolinux/blob/master/cloudbio/custom/bio_nextgen.py
+    for an up-to-date version
+    """
+    tools = ["liftOver", "faToTwoBit", "twoBitToFa", "bedToBigBed", "wigToBigWig", "bedGraphToBigWig"]
+    url = "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/"
+    for tool in tools:
+        with lcd(env.bin_dir):
+            if not lexists(os.path.join(env.bin_dir, tool)):
+                lrun("wget %s%s" % (url, tool))
+                lrun("chmod a+rwx %s" % tool)
+
 def install_samtools():
     """Install samtools 0.1.18
     """
@@ -425,7 +427,6 @@ def install_samtools():
             # copy executables to bin
             lrun("find . -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
-#@_if_not_installed("bedtools")            
 def install_bedtools():
     """Install BEDTools 2.17.0
     """
@@ -437,49 +438,18 @@ def install_bedtools():
             lrun("make all")
             lrun("find bin/. -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
-
-
-
-# ================================================================================
-# == chipseq specific
-
-def setup_environment():
-    """Copy adhoc environment variables
-    """
-    lrun('cp %(chipseq_build_path)s/%(env_setup)s %(project_dir)s/%(env_setup)s' % env)
-    _make_dir(env.tmp_dir)
-
-def install_chipseq():
-    """Checkout the latest chipseq code from svn repository and update.
-    """
-    update = True
-    if env.chipseq_path is not None:
-        if not lexists(env.chipseq_path):
-            update = False
-            with lcd(os.path.split(env.chipseq_path)[0]):
-                lrun('svn co  svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH05')
-        with lcd(env.chipseq_path):
-            if update:
-                lrun('svn update')
-
-
-def install_macs():
-    """Model-based Analysis for ChIP-Seq.
-    http://liulab.dfci.harvard.edu/MACS/
-    """
-    default_version = "1.4.2"
-    version = default_version
-    url = "https://github.com/downloads/taoliu/MACS/" \
-          "MACS-%s.tar.gz" % version
+def install_picard():
+    version = "1.96"
+    url = 'http://downloads.sourceforge.net/project/picard/picard-tools/%s/picard-tools-%s.zip' % (version, version)
+    pkg_name = 'picard'
+    install_dir = env.tmp_dir
     work_dir = env.tmp_dir
-    dir_name = _fetch_and_unpack(env.tmp_dir, url)
-    lrun("echo %s" % dir_name)
-    with lcd("MACS-1.4.2"):
-        vlrun("python setup.py install")
-    lrun("mv MACS-1.4.2 %s" % (env.bin_dir))
-    #lrun("rm -rf %s" % ("MACS-1.4.2"))
-
-
+    PicardDir = os.path.join(env.bin_dir, "picard")
+    lrun("mkdir -p %s" % PicardDir)
+    with cd(work_dir):
+        lrun("wget %s -O %s" % (url, os.path.split(url)[-1]))
+        lrun("unzip -o %s" % (os.path.split(url)[-1]))
+        lrun("mv picard-tools-%s/*.jar %s" % (version, PicardDir))
 
 def install_bwa():
     """BWA:  aligns short nucleotide sequences against a long reference sequence.
@@ -498,10 +468,22 @@ def install_bwa():
             # copy executables to bin
             lrun("find . -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
+def install_macs():
+    """Model-based Analysis for ChIP-Seq.
+    http://liulab.dfci.harvard.edu/MACS/
+    """
+    default_version = "1.4.2"
+    version = default_version
+    url = "https://github.com/downloads/taoliu/MACS/MACS-%s.tar.gz" % version
+    work_dir = env.tmp_dir
+    dir_name = _fetch_and_unpack(env.tmp_dir, url)
+    with lcd("MACS-1.4.2"):
+        vlrun("python setup.py install")
+    lrun("mv MACS-1.4.2 %s" % (env.bin_dir))
+    #lrun("rm -rf %s" % ("MACS-1.4.2"))
 
 def install_meme():
-    """BWA:  aligns short nucleotide sequences against a long reference sequence.
-    http://bio-bwa.sourceforge.net/
+    """
     """
     majorversion = "4.9.0"
     minorversion = "4"
@@ -517,78 +499,26 @@ def install_meme():
            lrun("make install")      
            
 def install_sicer():
-       url = "http://home.gwu.edu/~wpeng/SICER_V1.1.tgz"
-       with lcd(env.tmp_dir):
-          dir_name = _fetch_and_unpack(env.tmp_dir, url)
-          lrun("mv SICER_V1.1 %s" % (env.bin_dir))          
+   url = "http://home.gwu.edu/~wpeng/SICER_V1.1.tgz"
+   with lcd(env.tmp_dir):
+      dir_name = _fetch_and_unpack(env.tmp_dir, url)
+      lrun("mv SICER_V1.1 %s" % (env.bin_dir))          
 
-       
-def install_picard():
-    version = "1.96"
-    url = 'http://downloads.sourceforge.net/project/picard/picard-tools/%s/picard-tools-%s.zip' % (version, version)
-    pkg_name = 'picard'
-    #install_dir = env.system_install
-    #install_cmd = env.safe_sudo if env.use_sudo else env.safe_run
-    install_dir = env.tmp_dir
-    #if not env.safe_exists(install_dir):
-    #lrun("mkdir -p %s" % install_dir)
-    #with _make_tmp_dir() as work_dir:
-    work_dir = env.tmp_dir
-    PicardDir = os.path.join(env.bin_dir,"picard")
-    lrun("mkdir -p %s" % PicardDir )
-    with cd(work_dir):
-        lrun("wget %s -O %s" % (url, os.path.split(url)[-1]))
-        lrun("unzip -o %s" % (os.path.split(url)[-1]))
-        lrun("mv picard-tools-%s/*.jar %s" % (version, PicardDir))
-    #_update_default(env, install_dir)
-    # set up the jars directory
-    #jar_dir = os.path.join(bin_dir, 'picard')
-    #if not env.safe_exists(jar_dir):
-    #    install_cmd("mkdir -p %s" % jar_dir)
-    #tool_dir = os.path.join(env.galaxy_tools_dir, pkg_name, 'default')
-    #install_cmd('ln --force --symbolic %s/*.jar %s/.' % (tool_dir, jar_dir))
-    #lrun('chown --recursive %s' % (PicardDir))
+# ================================================================================
+# == Install chipseq pipeline
+      
+def install_chipseq():
+    """Checkout the latest chipseq code from public svn repository and update.
+    """
+    update = True
+    if env.chipseq_path is not None:
+        if not lexists(env.chipseq_path):
+            update = False
+            with lcd(os.path.split(env.chipseq_path)[0]):
+                lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH05')
+        with lcd(env.chipseq_path):
+            if update:
+                lrun('svn update')
 
-@_if_not_installed(None)
-def install_fastx_toolkit(env):
-    version = env.tool_version
-    gtext_version = "0.6.1"
-    url_base = "http://hannonlab.cshl.edu/fastx_toolkit/"
-    fastx_url = "%sfastx_toolkit-%s.tar.bz2" % (url_base, version)
-    gtext_url = "%slibgtextutils-%s.tar.bz2" % (url_base, gtext_version)
-    pkg_name = 'fastx_toolkit'
-    install_dir = os.path.join(env.galaxy_tools_dir, pkg_name, version)
-    with _make_tmp_dir() as work_dir:
-        with cd(work_dir):
-            env.safe_run("wget %s" % gtext_url)
-            env.safe_run("tar -xjvpf %s" % (os.path.split(gtext_url)[-1]))
-            install_cmd = env.safe_sudo if env.use_sudo else env.safe_run
-            with cd("libgtextutils-%s" % gtext_version):
-                env.safe_run("./configure --prefix=%s" % (install_dir))
-                env.safe_run("make")
-                install_cmd("make install")
-            env.safe_run("wget %s" % fastx_url)
-            env.safe_run("tar -xjvpf %s" % os.path.split(fastx_url)[-1])
-            with cd("fastx_toolkit-%s" % version):
-                env.safe_run("export PKG_CONFIG_PATH=%s/lib/pkgconfig; ./configure --prefix=%s" % (install_dir, install_dir))
-                env.safe_run("make")
-                install_cmd("make install")
-    
-    
-    @_if_not_installed("fastqc")
-    def install_fastqc(env):
-        """ This tool is installed in Galaxy's jars dir """
-        version = env.tool_version
-        url = 'http://www.bioinformatics.bbsrc.ac.uk/projects/fastqc/fastqc_v%s.zip' % version
-        pkg_name = 'FastQC'
-        install_dir = os.path.join(env.galaxy_jars_dir)
-        install_cmd = env.safe_sudo if env.use_sudo else env.safe_run
-        if not env.safe_exists(install_dir):
-            install_cmd("mkdir -p %s" % install_dir)
-        with cd(install_dir):
-            install_cmd("wget %s -O %s" % (url, os.path.split(url)[-1]))
-            install_cmd("unzip -u %s" % (os.path.split(url)[-1]))
-            install_cmd("rm %s" % (os.path.split(url)[-1]))
-            with cd(pkg_name):
-                install_cmd('chmod 755 fastqc')
-            install_cmd('chown --recursive %s:%s %s' % (env.galaxy_user, env.galaxy_user, pkg_name))
+
+
