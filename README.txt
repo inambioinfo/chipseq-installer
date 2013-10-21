@@ -37,5 +37,5 @@ and follow the instructions
 > source bin/activate
 
 - then, install chipseq pipeline:
-> fab -f chipseq-build/scripts/chipseq_installer.py local deploy_chipseq > chipseq_installer.out
+> fab -f chipseq-build/scripts/chipseq_installer.py local deploy > chipseq_installer.out
 

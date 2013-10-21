@@ -34,5 +34,5 @@ echo "    to your installation machine. If you'd like to do this "
 echo "    without any passwords you can setup your ssh keys with:"
 echo "    > cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
 echo
-echo ">>> fab -f chipseq-build/scripts/fabfile.py local deploy_chipseq"
+echo ">>> fab -f chipseq-build/scripts/chipseq_installer.py local deploy > chipseq_installer.out"
 echo

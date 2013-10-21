@@ -27,7 +27,7 @@ Fabric  deployment file  to set  up a  local Galaxy  instance.  Fabric
 server.
 
 Usage:
-    fab -f scripts/chipseq_installer.py local deploy_chipseq > chipseq_installer.out
+    fab -f scripts/chipseq_installer.py local deploy > chipseq_installer.out
 """
 import os
 from contextlib import contextmanager
