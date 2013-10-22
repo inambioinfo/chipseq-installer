@@ -532,10 +532,29 @@ def install_genomes():
 	    lrun("wget %s -O %s" % (url_genesAsGTFMM10, os.path.split(url_genesAsGTFMM10)[-1]))
 	    lrun("gzip -d -r  %s" % (os.path.split(url_genesAsGTFMM10)[-1]))
 	    lrun("wget %s -O %s" % (url_EnsemblToGeneMM10, os.path.split(url_EnsemblToGeneMM10)[-1]))
-	    lrun("unzip  -o %s" % ( os.path.split(url_EnsemblToGeneMM10)[-1]))
+	    lrun("gzip  -o %s" % ( os.path.split(url_EnsemblToGeneMM10)[-1]))
 	    lrun("wget %s -O %s" % (url_EnsembleToExonTranscriptMM10, os.path.split(url_EnsembleToExonTranscriptMM10)[-1]))
 	    lrun("gzip -d -r  %s" % (os.path.split(url_EnsembleToExonTranscriptMM10)[-1]))    
 
+
+# ================================================================================
+# == Install Ikaros ChIP test data
+def install_Test():
+
+	url_Rep1_lane1 = "ftp://ftp.ensembl.org/pub/release-67/fasta/homo_sapiens/dna/CHECKSUMS"
+	url_Rep1_lane2 = "ftp://ftp.ensembl.org/pub/release-67/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.67.dna.toplevel.fa.gz"
+	url_Rep2_lane1 = "ftp://ftp.ensembl.org/pub/release-67/gtf/homo_sapiens/Homo_sapiens.GRCh37.67.gtf.gz"
+	url_Rep2_lane2 = "ftp://ftp.ensembl.org/pub/release-67/gtf/homo_sapiens/Homo_sapiens.GRCh37.67.gtf.gz"
+	url_InputForRep1 = "ftp://ftp.ensembl.org/pub/release-67/gtf/homo_sapiens/Homo_sapiens.GRCh37.67.gtf.gz"
+	url_InputForRep2 = "ftp://ftp.ensembl.org/pub/release-67/gtf/homo_sapiens/Homo_sapiens.GRCh37.67.gtf.gz"	
+
+	with cd(env.tmp_dir):
+	    lrun("wget %s -O %s" % (url_Rep1_lane1, os.path.split(url_Rep1_lane1)[-1]))
+	    lrun("wget %s -O %s" % (url_Rep1_lane2, os.path.split(url_Rep1_lane2)[-1]))
+	    lrun("wget %s -O %s" % (url_Rep2_lane1, os.path.split(url_Rep2_lane1)[-1]))
+	    lrun("wget %s -O %s" % (url_Rep2_lane2, os.path.split(url_Rep2_lane2)[-1]))
+	    lrun("wget %s -O %s" % (url_InputForRep1, os.path.split(url_Rep1_lane1)[-1]))
+	    lrun("wget %s -O %s" % (url_InputForRep2, os.path.split(url_InputForRep2)[-1]))
 
 
 # ================================================================================
