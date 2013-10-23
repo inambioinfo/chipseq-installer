@@ -208,7 +208,7 @@ def install_dependencies():
     install_perl()
     install_perl_libraries()
     install_python_libraries()
-    install_maven()
+    # waiting for url to download jar
     #install_workflow()
 
 def install_python_libraries():
@@ -222,8 +222,10 @@ def install_python_libraries():
     vlrun("pip install pyyaml==3.10")
     vlrun("pip install rpy2==2.3.8")
     vlrun("pip install pysam==0.7.4")
-    vlrun("pip install scipy==0.12.1")
+    # problem with ATLAS installation
+    #vlrun("pip install scipy==0.12.1")
     vlrun("pip install bx-python==0.7.1")
+    vlrun("pip install configparser")
     _install_rpy_lib()
 
 @_if_not_python_lib("rpy")
@@ -270,17 +272,6 @@ def install_r_libraries():
     source(\"%s\")
     """ % (config["cranrepo"], config["biocrepo"])
     lrun("echo '%s' >> %s" % (repo_info, out_file))
-    #install_fn = """
-    #repo.installer <- function(repos, install.fn) {
-    #  update.or.install <- function(pname) {
-    #    if (pname %%in%% installed.packages())
-    #      update.packages(lib.loc=c(pname), repos=repos, ask=FALSE,instlib=\"%(r_lib_dir)s\")
-    #    else
-    #      install.fn(pname,lib=\"%(r_lib_dir)s\")
-    #  }
-    #}
-    #""" % env
-    #lrun("echo '%s' >> %s" % (install_fn, out_file))
     bioc_install = """
     bioc.pkgs <- c(%s)
 
@@ -360,20 +351,11 @@ def install_perl():
             lrun("make")
             lrun("make install")
 
-def install_maven():
-    url = "http://mirror.gopotato.co.uk/apache/maven/maven-3/3.1.0/binaries/apache-maven-3.1.0-bin.tar.gz"
-    with lcd(env.tmp_dir):
-        dir_name = _fetch_and_unpack(env.tmp_dir, url)
-        lrun("mv apache-maven-3.1.0 %s" % (env.bin_dir))
-        
 def install_workflow():
-    """Checkout the latest chipseq code from svn repository and update.
+    """Checkout the workflow jar from repository.
     """
-    mvnToUse = os.path.join(env.bin_dir,"apache-maven-3.1.0","bin","mvn")
-    with lcd(env.tmp_dir):
-         lrun('svn co  svn://uk-cri-lbio01/workflow/trunk/ Workflow1.4')
-         with lcd("Workflow1.4"):              
-             lrun('%s clean install' % (mvnToUse))
+    with lcd(env.lib_dir):
+         lrun('svn co svn://uk-cri-lbio01/workflow/trunk/ Workflow1.4')
 
 # ================================================================================
 # == Required specific tools to install chipseq pipeline
