@@ -71,6 +71,7 @@ def deploy():
     install_genomes()
     install_test()
     install_chipseq()
+    update_config()
     configure_meme()
 
 
