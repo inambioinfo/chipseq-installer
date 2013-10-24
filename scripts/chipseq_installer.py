@@ -44,7 +44,11 @@ env.project_dir = os.getcwd()
 env.tmp_dir = os.path.join(env.project_dir, 'tmp')
 env.bin_dir = os.path.join(env.project_dir, 'bin')
 env.lib_dir = os.path.join(env.project_dir, 'lib')
+env.annotation_dir = os.path.join(env.project_dir, 'annotation')
 env.r_lib_dir = os.path.join(env.project_dir, 'lib/R/library')
+env.perl_dir = os.path.join(.bin_dir, 'perl')
+env.meme_dir = os.path.join(.bin_dir, 'meme')
+env.sicer_dir = os.path.join(.bin_dir, 'sicer')
 env.chipseq_build_path = os.path.join(env.project_dir, 'chipseq-build')
 env.chipseq_path = os.path.join(env.project_dir, 'Process10')
 env.use_sudo = False
@@ -69,6 +73,7 @@ def deploy():
     install_dependencies()
     install_tools()
     install_chipseq()
+    #install_genomes()
 
 # ================================================================================
 # == Decorators and context managers
@@ -208,8 +213,7 @@ def install_dependencies():
     install_perl()
     install_perl_libraries()
     install_python_libraries()
-    # waiting for url to download jar
-    #install_workflow()
+    install_workflow()
 
 def install_python_libraries():
     """Install Python libraries
@@ -324,38 +328,35 @@ def install_r_libraries():
     vlrun("%s %s" % (os.path.join(env.bin_dir, "Rscript"),out_file))
     #lrun("rm -f %s" % out_file)
 
-def install_perl_libraries():
-    """Install perl library HTML Template
-    """
-    urlHTMLTemplate = "http://search.cpan.org/CPAN/authors/id/W/WO/WONKO/HTML-Template-2.94.tar.gz"
-    perl = os.path.join(env.bin_dir,"perl-5.18.0","bin","perl")
-    with lcd(env.tmp_dir):
-        dir_name = _fetch_and_unpack(env.tmp_dir, urlHTMLTemplate)
-	tmp_HTMLTemplate = os.path.join(env.tmp_dir,"HTML-Template-2.94")        
-        with lcd(tmp_HTMLTemplate):
-            lrun("%s Makefile.PL"  % (perl))
-            lrun("make")
-            vlrun("make install")
-
 def install_perl():
     """Install perl
     """
     url = "http://www.cpan.org/src/5.0/perl-5.18.0.tar.gz"
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
-        install_dir = os.path.join(env.bin_dir,"perl-5.18.0")
-        tmp_perl = os.path.join(env.tmp_dir,"perl-5.18.0")
-        lrun("mkdir -p %s" % install_dir)
-        with lcd(tmp_perl):
-            lrun("sh Configure -de -Dprefix='%s'" % (install_dir))
+        if not lexists(env.perl_dir):
+            lrun("mkdir -p %s" % env.perl_dir)
+        with lcd(dir_name):
+            lrun("sh Configure -de -Dprefix='%s'" % (env.perl_dir))
             lrun("make")
             lrun("make install")
 
+def install_perl_libraries():
+    """Install perl library HTML Template
+    """
+    url = "http://search.cpan.org/CPAN/authors/id/W/WO/WONKO/HTML-Template-2.94.tar.gz"
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
+            lrun("%s Makefile.PL"  % os.path.join(env.perl_dir,"bin","perl"))
+            lrun("make")
+            vlrun("make install")
+
 def install_workflow():
-    """Checkout the workflow jar from repository.
+    """Checkout the workflow manager from repository.
     """
     with lcd(env.lib_dir):
-         lrun('svn co svn://uk-cri-lbio01/workflow/trunk/ Workflow1.4')
+         lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/workflow-manager/ workflow-manager')
 
 # ================================================================================
 # == Required specific tools to install chipseq pipeline
@@ -409,8 +410,8 @@ def install_bedtools():
     """
     url = "http://bedtools.googlecode.com/files/BEDTools.v2.17.0.tar.gz"
     with lcd(env.tmp_dir):
-        _fetch_and_unpack(env.tmp_dir, url, False)
-        with lcd("bedtools-2.17.0"):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
             lrun("make clean")
             lrun("make all")
             lrun("find bin/. -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
@@ -418,15 +419,12 @@ def install_bedtools():
 def install_picard():
     version = "1.96"
     url = 'http://downloads.sourceforge.net/project/picard/picard-tools/%s/picard-tools-%s.zip' % (version, version)
-    pkg_name = 'picard'
-    install_dir = env.tmp_dir
-    work_dir = env.tmp_dir
-    PicardDir = os.path.join(env.bin_dir, "picard")
-    lrun("mkdir -p %s" % PicardDir)
-    with cd(work_dir):
-        lrun("wget %s -O %s" % (url, os.path.split(url)[-1]))
-        lrun("unzip -o %s" % (os.path.split(url)[-1]))
-        lrun("mv picard-tools-%s/*.jar %s" % (version, PicardDir))
+    picard_dir = os.path.join(env.bin_dir, "picard")
+    lrun("mkdir -p %s" % picard_dir)
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
+            lrun("mv *.jar %s" % picard_dir)
 
 def install_bwa():
     """BWA:  aligns short nucleotide sequences against a long reference sequence.
@@ -449,29 +447,23 @@ def install_macs():
     """Model-based Analysis for ChIP-Seq.
     http://liulab.dfci.harvard.edu/MACS/
     """
-    default_version = "1.4.2"
-    version = default_version
+    version = "1.4.2"
     url = "https://github.com/downloads/taoliu/MACS/MACS-%s.tar.gz" % version
-    work_dir = env.tmp_dir
-    dir_name = _fetch_and_unpack(env.tmp_dir, url)
-    with lcd("MACS-1.4.2"):
-        vlrun("python setup.py install")
-    lrun("mv MACS-1.4.2 %s" % (env.bin_dir))
-    #lrun("rm -rf %s" % ("MACS-1.4.2"))
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
+            vlrun("python setup.py install")
+            lrun("chmod a+rwx bin/*")
+            lrun("find bin/. -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
 def install_meme():
     """
     """
-    majorversion = "4.9.0"
-    minorversion = "4"
-    version  = majorversion+"_"+minorversion
-    url = "http://ebi.edu.au/ftp/software/MEME/%s/meme_%s.tar.gz" % (majorversion,version)
-    memetmp = os.path.join(env.tmp_dir,"meme"+"_"+majorversion)
-    memebin = os.path.join(env.bin_dir,"meme"+"_"+majorversion)
+    url = "http://ebi.edu.au/ftp/software/MEME/4/meme_4.9.0.tar.gz"
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
-        with lcd(memetmp):
-           lrun("./configure --prefix=%s --with-url='http://meme.nbcr.net/meme'" % (memebin))
+        with lcd(dir_name):
+           lrun("./configure --prefix=%(meme_dir)s --with-url='http://meme.nbcr.net/meme'" % env)
            lrun("make")
            lrun("make install")      
            
@@ -479,7 +471,8 @@ def install_sicer():
    url = "http://home.gwu.edu/~wpeng/SICER_V1.1.tgz"
    with lcd(env.tmp_dir):
       dir_name = _fetch_and_unpack(env.tmp_dir, url)
-      lrun("mv SICER_V1.1 %s" % (env.bin_dir))          
+      with lcd(dir_name):
+          lrun("mv SICER %(sicer_dir)s" % env)          
 
 # ================================================================================
 # == Install chipseq pipeline
@@ -496,6 +489,47 @@ def install_chipseq():
         with lcd(env.chipseq_path):
             if update:
                 lrun('svn update')
+
+# ================================================================================
+# == Install hg19 and mm10 genomes
+
+def install_genomes():
+	GRCh37Annotation = os.path.join(env.annotation_dir, "GRCh37_Ensembl")
+	lrun("mkdir -p %s" % (GRCh37Annotation))
+	url_checsumsHG19 = "ftp://ftp.ensembl.org/pub/release-67/fasta/homo_sapiens/dna/CHECKSUMS"
+	url_wholegenomefastaHG19 = "ftp://ftp.ensembl.org/pub/release-67/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.67.dna.toplevel.fa.gz"
+	url_genesAsGTFHG19 = "ftp://ftp.ensembl.org/pub/release-67/gtf/homo_sapiens/Homo_sapiens.GRCh37.67.gtf.gz"
+	url_EnsemblToGeneHG19 = "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__gene__main.txt.gz"
+	url_EnsembleToExonTranscriptHG19 = "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__exon_transcript__dm.txt.gz"
+
+	MM10Annotation = os.path.join(env.annotation_dir,"MM10_Ensembl")
+	lrun("mkdir -p %s" % (GRCh37Annotation))
+	url_checsumsMM10 = "ftp://ftp.ensembl.org/pub/release-67/fasta/mus_musculus/dna/CHECKSUMS"
+	url_wholegenomefastaMM10 = "ftp://ftp.ensembl.org/pub/release-67/fasta/mus_musculus/dna/Mus_musculus.NCBIM37.67.dna.toplevel.fa.gz"
+	url_genesAsGTFMM10 = "ftp://ftp.ensembl.org/pub/release-67/gtf/mus_musculus/Mus_musculus.NCBIM37.67.gtf.gz"
+	url_EnsemblToGeneMM10 = "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__exon_transcript__dm.txt.gz"
+	url_EnsembleToExonTranscriptMM10 = "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__gene__main.txt.gz"
+
+	with lcd(GRCh37Annotation):
+	    _fetch_and_unpack(GRCh37Annotation, url_wholegenomefastaHG19)
+	    lrun("wget %s -O %s" % (url_wholegenomefastaHG19, os.path.split(url_wholegenomefastaHG19)[-1]))
+	    lrun("gzip -d -r %s" % (os.path.split(url_wholegenomefastaHG19)[-1]))
+	    lrun("wget %s -O %s" % (url_genesAsGTFHG19, os.path.split(url_genesAsGTFHG19)[-1]))
+	    lrun("gzip -d -r  %s" % (os.path.split(url_genesAsGTFHG19)[-1]))
+	    lrun("wget %s -O %s" % (url_EnsemblToGeneHG19, os.path.split(url_EnsemblToGeneHG19)[-1]))
+	    lrun("gzip -d -r  %s" % ( os.path.split(url_EnsemblToGeneHG19)[-1]))
+	    lrun("wget %s -O %s" % (url_EnsembleToExonTranscriptHG19, os.path.split(url_EnsembleToExonTranscriptHG19)[-1]))
+	    lrun("gzip -d -r  %s" % (os.path.split(url_EnsembleToExonTranscriptHG19)[-1]))    
+
+	with lcd(MM10Annotation):
+	    lrun("wget %s -O %s" % (url_wholegenomefastaMM10, os.path.split(url_wholegenomefastaMM10)[-1]))
+	    lrun("gzip -d -r  %s" % (os.path.split(url_wholegenomefastaMM10)[-1]))
+	    lrun("wget %s -O %s" % (url_genesAsGTFMM10, os.path.split(url_genesAsGTFMM10)[-1]))
+	    lrun("gzip -d -r  %s" % (os.path.split(url_genesAsGTFMM10)[-1]))
+	    lrun("wget %s -O %s" % (url_EnsemblToGeneMM10, os.path.split(url_EnsemblToGeneMM10)[-1]))
+	    lrun("gzip  -o %s" % ( os.path.split(url_EnsemblToGeneMM10)[-1]))
+	    lrun("wget %s -O %s" % (url_EnsembleToExonTranscriptMM10, os.path.split(url_EnsembleToExonTranscriptMM10)[-1]))
+	    lrun("gzip -d -r  %s" % (os.path.split(url_EnsembleToExonTranscriptMM10)[-1]))    
 
 
 
