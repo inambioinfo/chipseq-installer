@@ -584,7 +584,7 @@ def install_genomes():
 	    "ftp://ftp.ensembl.org/pub/release-67/gtf/homo_sapiens/Homo_sapiens.GRCh37.67.gtf.gz",
 	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__gene__main.txt.gz",
 	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__exon_transcript__dm.txt.gz"]
-	with lcd(grch37_dir):
+	with lcd(env.grch37_dir):
 	    for url in grch37_urls:
 	        _fetch_and_unpack_genome(grch37_dir, url)
 
@@ -593,7 +593,7 @@ def install_genomes():
 	    "ftp://ftp.ensembl.org/pub/release-67/gtf/mus_musculus/Mus_musculus.NCBIM37.67.gtf.gz", 
 	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__exon_transcript__dm.txt.gz",
 	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__gene__main.txt.gz"]
-	with lcd(mm10_dir):
+	with lcd(env.mm10_dir):
 	    for url in mm10_urls:
 	        _fetch_and_unpack_genome(mm10_dir, url)
 
