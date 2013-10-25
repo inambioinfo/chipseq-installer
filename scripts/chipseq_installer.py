@@ -410,9 +410,11 @@ def install_bedtools():
     """
     url = "http://bedtools.googlecode.com/files/BEDTools.v2.17.0.tar.gz"
     with lcd(env.tmp_dir):
-        dir_name = _fetch_and_unpack(env.tmp_dir, url)
-        with lcd(dir_name):
-            lrun("make")
+        # cannot _fetch_and_unpack return because package name does not match unpacked dir
+        _fetch_and_unpack(env.tmp_dir, url, False)
+        with lcd("bedtools-2.17.0"):
+            lrun("make clean")
+            lrun("make all")
             lrun("find bin/. -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
 def install_picard():
