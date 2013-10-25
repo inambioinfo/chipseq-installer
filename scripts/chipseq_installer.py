@@ -372,7 +372,7 @@ def install_java():
     tar_file = "jdk-7-linux-x64.tar.gz"
     with lcd(env.tmp_dir):
         lrun('wget --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%%3A%%2F%%2Fwww.oracle.com" http://download.oracle.com/otn-pub/java/jdk/7/%s -O %s' % (tar_file, tar_file))
-        lrun ("tar zxvf %s" % tar_file)
+        lrun ("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
 
 def install_workflow():
     """Checkout the workflow manager from repository.
