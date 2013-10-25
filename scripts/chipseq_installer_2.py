@@ -549,7 +549,7 @@ def install_test():
 	    lrun("wget %s -O %s" % (url_InputForRep2, os.path.split(url_InputForRep2)[-1]))
 
 def configure_meme():
-	URLForJasparAll <-  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/all_data/matrix_only/matrix_only.txt"
+	URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/all_data/matrix_only/matrix_only.txt"
 	lrun("wget -r -np -nH  -R index.html %s " % (URLForJasparAll))
 
 # ================================================================================
