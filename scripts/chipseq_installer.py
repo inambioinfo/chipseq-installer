@@ -168,7 +168,7 @@ def _fetch(path, url):
     tar_file = os.path.split(url)[-1]
     if not lexists(os.path.join(path, tar_file)):
         lrun("wget %s -O %s" % (url, tar_file)
-        
+
 def _fetch_and_unpack_genome(path, url):
     tar_file = os.path.split(url)[-1]
     if not lexists(os.path.join(path, tar_file)):
