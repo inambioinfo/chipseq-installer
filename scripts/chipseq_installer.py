@@ -45,12 +45,16 @@ env.tmp_dir = os.path.join(env.project_dir, 'tmp')
 env.bin_dir = os.path.join(env.project_dir, 'bin')
 env.lib_dir = os.path.join(env.project_dir, 'lib')
 env.annotation_dir = os.path.join(env.project_dir, 'annotation')
+env.grch37_dir = os.path.join(env.annotation_dir, "grch37_ensembl")
+env.mm10_dir = os.path.join(env.annotation_dir, "mm10_Ensembl")
+env.testfq_dir = os.path.join(env.project_dir, "test", "fqdirectory")
 env.r_lib_dir = os.path.join(env.project_dir, 'lib/R/library')
 env.perl_dir = os.path.join(env.bin_dir, 'perl')
 env.meme_dir = os.path.join(env.bin_dir, 'meme')
 env.sicer_dir = os.path.join(env.bin_dir, 'sicer')
 env.chipseq_build_path = os.path.join(env.project_dir, 'chipseq-build')
 env.chipseq_path = os.path.join(env.project_dir, 'Process10')
+env.chipseq_config_path = os.path.join(env.chipseq_path, 'Config')
 env.use_sudo = False
 
 # ================================================================================
@@ -73,7 +77,7 @@ def deploy():
     install_dependencies()
     install_tools()
     install_chipseq()
-    install_genomes()
+    install_data()
 
 # ================================================================================
 # == Decorators and context managers
@@ -124,9 +128,6 @@ def _make_dir(path):
 
 def _get_expected_file(path, url):
     tar_file = os.path.split(url)[-1]
-    # delete tar file if it already exists
-    if lexists(os.path.join(path, tar_file)):
-        lrun("rm -f %s" % os.path.join(path, tar_file))
     safe_tar = "--pax-option='delete=SCHILY.*,delete=LIBARCHIVE.*'"
     exts = {(".tar.gz", ".tgz") : "tar %s -xzpf" % safe_tar,
             (".tar.bz2",): "tar %s -xjpf" % safe_tar,
@@ -158,10 +159,21 @@ def _safe_dir_name(path, dir_name, need_dir=True):
 
 def _fetch_and_unpack(path, url, need_dir=True):
     tar_file, dir_name, tar_cmd = _get_expected_file(path, url)
-    if not lexists(tar_file):
+    if not lexists(os.path.join(path, tar_file)):
         lrun("wget --no-check-certificate %s" % url)
         lrun("%s %s" % (tar_cmd, tar_file))
     return _safe_dir_name(path, dir_name, need_dir)
+    
+def _fetch(path, url):
+    tar_file = os.path.split(url)[-1]
+    if not lexists(os.path.join(path, tar_file)):
+        lrun("wget %s -O %s" % (url, tar_file)
+        
+def _fetch_and_unpack_genome(path, url):
+    tar_file = os.path.split(url)[-1]
+    if not lexists(os.path.join(path, tar_file)):
+        lrun("wget %s -O %s" % (url, tar_file)
+        lrun("gzip -d -r  %s" % tar_file)
 
 def _configure_make(env, options=None):
     if options:
@@ -461,8 +473,6 @@ def install_macs():
             lrun("find bin/. -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
 def install_meme():
-    """
-    """
     url = "http://ebi.edu.au/ftp/software/MEME/4.9.1/meme_4.9.1.tar.gz"
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
@@ -479,9 +489,13 @@ def install_sicer():
           lrun("mv SICER %(sicer_dir)s" % env)          
 
 # ================================================================================
-# == Install chipseq pipeline
-      
+# == Install chipseq pipeline and update config file
+
 def install_chipseq():
+    install_chipseq_pipeline()
+    update_config()
+          
+def install_chipseq_pipeline():
     """Checkout the latest chipseq code from public svn repository and update.
     """
     update = True
@@ -489,51 +503,114 @@ def install_chipseq():
         if not lexists(env.chipseq_path):
             update = False
             with lcd(os.path.split(env.chipseq_path)[0]):
-                lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH07')
+                lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH07/Process10 Process10')
         with lcd(env.chipseq_path):
             if update:
                 lrun('svn update')
 
+def update_config():
+    import ConfigParser
+    config = ConfigParser.SafeConfigParser()
+    config_file = os.path.join(env.chipseq_config_path, "config.ini")
+    new_config_file = os.path.join(env.chipseq_config_path, "configNew.ini")
+    if os.path.exists(config_file):
+        config.read(config_file)
+        inifile = open(new_config_file, 'w')
+
+        config.set("Executables", "meme", os.path.join(env.bin_dir, "/meme/bin/meme-chip"))
+        config.set("Executables", "python", os.path.join(env.bin_dir, "python"))
+        config.set("Executables", "perl", os.path.join(env.bin_dir, "/perl/bin/perl"))
+        config.set("Executables", "bwa", os.path.join(env.bin_dir, "bwa"))
+        config.set("Executables", "samtools", os.path.join(env.bin_dir, "samtools"))
+        config.set("Executables", "picard", os.path.join(env.bin_dir, "picard"))
+        config.set("Executables", "rsync", "rsync")
+        config.set("Executables", "bedtools", os.path.join(env.bin_dir, "bedtools"))
+        config.set("Executables", "java", "java")
+        config.set("Executables", "rexec", os.path.join(env.bin_dir, "R"))
+        config.set("Executables", "bigwig", os.path.join(env.bin_dir, "bedGraphToBigWig"))
+        config.set("Executables", "macs", os.path.join(env.bin_dir, "macs14"))
+        config.set("Executables", "ame", os.path.join(env.bin_dir, "ame"))
+        config.set("Executables", "sicer", os.path.join(env.bin_dir, "sicer"))
+        config.set("Custom Scripts", "tpicscreatecoverage", os.path.join(env.chipseq_path, "/CRI_TPICS/create_coverage.pl"))
+        config.set("Custom Scripts", "tpicszeta", os.path.join(env.chipseq_path, "/CRI_TPICS/zeta.pl"))
+        config.set("Custom Scripts", "tpics", os.path.join(env.chipseq_path, "/CRI_TPICS/tpic.r"))
+
+        config.set("Libraries", "rlibs",env.r_lib_dir)
+        config.set("Libraries", "pythonlibs", os.path.join(env.lib_dir,"/python2.7/site-packages/"))
+        config.set("Libraries", "perllibs", os.path.join(env.bin_dir,"/perl/lib/site_perl/5.18.0/"))
+        config.set("Libraries", "javalibs","")
+
+        config.set("meme parameters", "tfdb", "")
+
+        config.set("Genomes", "grch37", os.path.join(env.grch37_dir, "Homo_sapiens.GRCh37.67.dna.toplevel.fa"))
+        config.set("Genomes", "mm10", os.path.join(env.mm10_dir, "Mus_musculus.NCBIM37.67.dna.toplevel.fa"))
+        config.set("Genomes", "mm9", "")
+        config.set("Genomes", "hg18", "")
+
+        config.set("Excluded Regions", "grch37","")
+        config.set("Excluded Regions", "mm10","")
+        config.set("Excluded Regions", "hg19","")
+        config.set("Excluded Regions", "mm9","")
+
+        config.set("ExcludedRegions", "grch37","")
+        config.set("ExcludedRegions", "mm10","")
+        config.set("ExcludedRegions", "hg19","")
+        config.set("ExcludedRegions", "mm9","")
+
+        config.set("Chromosome Lengths", "grch37","")
+        config.set("Chromosome Lengths", "mm10","")
+        config.set("Chromosome Lengths", "hg19","")
+        config.set("Chromosome Lengths", "mm9","")	
+
+        config.set("Sequence Dictionary", "grch37","")
+        config.set("Sequence Dictionary", "mm10","")
+        config.set("Sequence Dictionary", "hg19","")
+        config.set("Sequence Dictionary", "mm9","")	
+
+        config.write(inifile)
+        inifile.close()
+
 # ================================================================================
-# == Install hg19 and mm10 genomes
+# == Install hg19 and mm10 genomes and Ikaros ChIP test data
+
+def install_data():
+    install_genomes()
+    install_testdata()
+    configure_meme()
 
 def install_genomes():
-	GRCh37Annotation = os.path.join(env.annotation_dir, "GRCh37_Ensembl")
-	lrun("mkdir -p %s" % (GRCh37Annotation))
-	url_checsumsHG19 = "ftp://ftp.ensembl.org/pub/release-67/fasta/homo_sapiens/dna/CHECKSUMS"
-	url_wholegenomefastaHG19 = "ftp://ftp.ensembl.org/pub/release-67/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.67.dna.toplevel.fa.gz"
-	url_genesAsGTFHG19 = "ftp://ftp.ensembl.org/pub/release-67/gtf/homo_sapiens/Homo_sapiens.GRCh37.67.gtf.gz"
-	url_EnsemblToGeneHG19 = "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__gene__main.txt.gz"
-	url_EnsembleToExonTranscriptHG19 = "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__exon_transcript__dm.txt.gz"
+	lrun("mkdir -p %s" % (env.grch37_dir))
+	grch37_urls = ["ftp://ftp.ensembl.org/pub/release-67/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.67.dna.toplevel.fa.gz", 
+	    "ftp://ftp.ensembl.org/pub/release-67/gtf/homo_sapiens/Homo_sapiens.GRCh37.67.gtf.gz",
+	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__gene__main.txt.gz",
+	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__exon_transcript__dm.txt.gz"]
+	with lcd(grch37_dir):
+	    for url in grch37_urls:
+	        _fetch_and_unpack_genome(grch37_dir, url)
 
-	MM10Annotation = os.path.join(env.annotation_dir,"MM10_Ensembl")
-	lrun("mkdir -p %s" % (GRCh37Annotation))
-	url_checsumsMM10 = "ftp://ftp.ensembl.org/pub/release-67/fasta/mus_musculus/dna/CHECKSUMS"
-	url_wholegenomefastaMM10 = "ftp://ftp.ensembl.org/pub/release-67/fasta/mus_musculus/dna/Mus_musculus.NCBIM37.67.dna.toplevel.fa.gz"
-	url_genesAsGTFMM10 = "ftp://ftp.ensembl.org/pub/release-67/gtf/mus_musculus/Mus_musculus.NCBIM37.67.gtf.gz"
-	url_EnsemblToGeneMM10 = "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__exon_transcript__dm.txt.gz"
-	url_EnsembleToExonTranscriptMM10 = "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__gene__main.txt.gz"
+	lrun("mkdir -p %s" % (env.mm10_dir))
+	mm10_urls = ["ftp://ftp.ensembl.org/pub/release-67/fasta/mus_musculus/dna/Mus_musculus.NCBIM37.67.dna.toplevel.fa.gz",
+	    "ftp://ftp.ensembl.org/pub/release-67/gtf/mus_musculus/Mus_musculus.NCBIM37.67.gtf.gz", 
+	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__exon_transcript__dm.txt.gz",
+	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__gene__main.txt.gz"]
+	with lcd(mm10_dir):
+	    for url in mm10_urls:
+	        _fetch_and_unpack_genome(mm10_dir, url)
 
-	with lcd(GRCh37Annotation):
-	    _fetch_and_unpack(GRCh37Annotation, url_wholegenomefastaHG19)
-	    lrun("wget %s -O %s" % (url_wholegenomefastaHG19, os.path.split(url_wholegenomefastaHG19)[-1]))
-	    lrun("gzip -d -r %s" % (os.path.split(url_wholegenomefastaHG19)[-1]))
-	    lrun("wget %s -O %s" % (url_genesAsGTFHG19, os.path.split(url_genesAsGTFHG19)[-1]))
-	    lrun("gzip -d -r  %s" % (os.path.split(url_genesAsGTFHG19)[-1]))
-	    lrun("wget %s -O %s" % (url_EnsemblToGeneHG19, os.path.split(url_EnsemblToGeneHG19)[-1]))
-	    lrun("gzip -d -r  %s" % ( os.path.split(url_EnsemblToGeneHG19)[-1]))
-	    lrun("wget %s -O %s" % (url_EnsembleToExonTranscriptHG19, os.path.split(url_EnsembleToExonTranscriptHG19)[-1]))
-	    lrun("gzip -d -r  %s" % (os.path.split(url_EnsembleToExonTranscriptHG19)[-1]))    
+def install_testdata():
+	lrun("mkdir -p %s" % env.testfq_dir)
+	fq_urls = ["ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619469/SRR619469.fastq.gz",
+	    "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619470/SRR619470.fastq.gz",
+	    "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619471/SRR619471.fastq.gz",
+	    "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619472/SRR619472.fastq.gz",
+	    "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619473/SRR619473.fastq.gz",
+	    "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619474/SRR619474.fastq.gz"]
+	with cd(env.testfq_dir):
+	    for fq_url in fq_urls:
+	        _fetch(fq_url)
 
-	with lcd(MM10Annotation):
-	    lrun("wget %s -O %s" % (url_wholegenomefastaMM10, os.path.split(url_wholegenomefastaMM10)[-1]))
-	    lrun("gzip -d -r  %s" % (os.path.split(url_wholegenomefastaMM10)[-1]))
-	    lrun("wget %s -O %s" % (url_genesAsGTFMM10, os.path.split(url_genesAsGTFMM10)[-1]))
-	    lrun("gzip -d -r  %s" % (os.path.split(url_genesAsGTFMM10)[-1]))
-	    lrun("wget %s -O %s" % (url_EnsemblToGeneMM10, os.path.split(url_EnsemblToGeneMM10)[-1]))
-	    lrun("gzip  -o %s" % ( os.path.split(url_EnsemblToGeneMM10)[-1]))
-	    lrun("wget %s -O %s" % (url_EnsembleToExonTranscriptMM10, os.path.split(url_EnsembleToExonTranscriptMM10)[-1]))
-	    lrun("gzip -d -r  %s" % (os.path.split(url_EnsembleToExonTranscriptMM10)[-1]))    
-
+def configure_meme():
+	URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/all_data/matrix_only/matrix_only.txt"
+	lrun("wget -r -np -nH  -R index.html %s " % (URLForJasparAll))
 
 
