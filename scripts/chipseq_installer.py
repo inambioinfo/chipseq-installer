@@ -157,17 +157,17 @@ def _safe_dir_name(path, dir_name, need_dir=True):
                 if need_dir:
                     raise ValueError("Could not find directory %s" % dir_name)
 
-def _fetch_and_unpack(path, url, need_dir=True):
+def _fetch_and_unpack(path, url, need_dir=True, wget_options=None):
     tar_file, dir_name, tar_cmd = _get_expected_file(path, url)
     if not lexists(os.path.join(path, tar_file)):
-        lrun("wget --no-check-certificate %s" % url)
+        lrun("wget --no-check-certificate %s %s" % (wget_options, url))
         lrun("%s %s" % (tar_cmd, tar_file))
     return _safe_dir_name(path, dir_name, need_dir)
     
 def _fetch(path, url):
     tar_file = os.path.split(url)[-1]
     if not lexists(os.path.join(path, tar_file)):
-        lrun("wget %s -O %s" % (url, tar_file))
+        lrun("wget %s -O %s" % (url, os.path.join(path, tar_file)))
 
 def _fetch_and_unpack_genome(path, url):
     tar_file = os.path.split(url)[-1]
@@ -228,6 +228,7 @@ def install_dependencies():
     install_perl()
     install_perl_libraries()
     install_python_libraries()
+    install_java()
     install_workflow()
 
 def install_python_libraries():
@@ -366,6 +367,15 @@ def install_perl_libraries():
             lrun("%s Makefile.PL"  % os.path.join(env.perl_dir,"bin","perl"))
             lrun("make")
             vlrun("make install")
+            
+def install_java():
+    """wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" "http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz"
+    """
+    url = "http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz"
+    wget_options = '--no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" '
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+    
 
 def install_workflow():
     """Checkout the workflow manager from repository.
