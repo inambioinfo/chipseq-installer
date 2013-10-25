@@ -18,6 +18,8 @@ We are sorry but you will need to have these installed before we can start...
 - boots http://www.boost.org/
 - atlas http://math-atlas.sourceforge.net/
 
+Write about striping
+
 --------------------------------------------------------------------------------
 -- 1. Before you have any of our codes on your computer...
 --------------------------------------------------------------------------------

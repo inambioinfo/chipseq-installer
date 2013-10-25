@@ -76,8 +76,8 @@ def deploy():
     setup_environment()
     install_dependencies()
     install_tools()
-    install_chipseq()
     install_data()
+    install_chipseq()
 
 # ================================================================================
 # == Decorators and context managers
@@ -540,9 +540,6 @@ def update_config():
         config.set("Executables", "macs", os.path.join(env.bin_dir, "macs14"))
         config.set("Executables", "ame", os.path.join(env.bin_dir, "ame"))
         config.set("Executables", "sicer", os.path.join(env.bin_dir, "sicer"))
-        config.set("Custom Scripts", "tpicscreatecoverage", os.path.join(env.chipseq_path, "CRI_TPICS/create_coverage.pl"))
-        config.set("Custom Scripts", "tpicszeta", os.path.join(env.chipseq_path, "CRI_TPICS/zeta.pl"))
-        config.set("Custom Scripts", "tpics", os.path.join(env.chipseq_path, "CRI_TPICS/tpic.r"))
 
         config.set("Libraries", "rlibs",env.r_lib_dir)
         config.set("Libraries", "pythonlibs", os.path.join(env.lib_dir, "python2.7/site-packages/"))
