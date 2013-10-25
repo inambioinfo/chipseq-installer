@@ -73,7 +73,7 @@ def deploy():
     install_dependencies()
     install_tools()
     install_chipseq()
-    #install_genomes()
+    install_genomes()
 
 # ================================================================================
 # == Decorators and context managers
