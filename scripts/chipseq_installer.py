@@ -126,6 +126,12 @@ def _make_dir(path):
         if lrun("test -d %s" % path).failed:
             lrun("mkdir -p %s" % path)
 
+def _fetch_and_unpack_genome(path, url):
+    tar_file = os.path.split(url)[-1]
+    if not lexists(os.path.join(path, tar_file)):
+        lrun("wget %s -O %s" % (url, tar_file)
+        lrun("gzip -d -r  %s" % tar_file)
+
 def _get_expected_file(path, url):
     tar_file = os.path.split(url)[-1]
     safe_tar = "--pax-option='delete=SCHILY.*,delete=LIBARCHIVE.*'"
@@ -168,13 +174,6 @@ def _fetch(path, url):
     tar_file = os.path.split(url)[-1]
     if not lexists(os.path.join(path, tar_file)):
         lrun("wget %s -O %s" % (url, tar_file)
-
-
-def _fetch_and_unpack_genome(path, url):
-    tar_file = os.path.split(url)[-1]
-    if not lexists(os.path.join(path, tar_file)):
-        lrun("wget %s -O %s" % (url, tar_file)
-        lrun("gzip -d -r  %s" % tar_file)
 
 def _configure_make(env, options=None):
     if options:
@@ -263,7 +262,7 @@ def _install_rpy_lib():
 def install_r():
     """Install R 2.15.2
     """
-    lrun("mkdir -p %(r_lib_dir)s" % env)
+    _make_dir(env.r_lib_dir)
     url = "http://cran.r-project.org/src/base/R-2/R-2.15.0.tar.gz"
     option = "--enable-R-shlib"
     if not lexists(os.path.join(env.r_dir, "bin/R")):
@@ -351,7 +350,7 @@ def install_perl():
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
         if not lexists(env.perl_dir):
-            lrun("mkdir -p %s" % env.perl_dir)
+            _make_dir(env.perl_dir)
         with lcd(dir_name):
             lrun("sh Configure -de -Dprefix='%s'" % (env.perl_dir))
             lrun("make")
@@ -437,7 +436,7 @@ def install_picard():
     version = "1.96"
     url = 'http://downloads.sourceforge.net/project/picard/picard-tools/%s/picard-tools-%s.zip' % (version, version)
     picard_dir = os.path.join(env.bin_dir, "picard")
-    lrun("mkdir -p %s" % picard_dir)
+    _make_dir(picard_dir)
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
         with lcd(dir_name):
@@ -580,7 +579,7 @@ def install_data():
     configure_meme()
 
 def install_genomes():
-	lrun("mkdir -p %s" % (env.grch37_dir))
+	_make_dir(env.grch37_dir)
 	grch37_urls = ["ftp://ftp.ensembl.org/pub/release-67/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.67.dna.toplevel.fa.gz", 
 	    "ftp://ftp.ensembl.org/pub/release-67/gtf/homo_sapiens/Homo_sapiens.GRCh37.67.gtf.gz",
 	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__gene__main.txt.gz",
@@ -589,7 +588,7 @@ def install_genomes():
 	    for url in grch37_urls:
 	        _fetch_and_unpack_genome(grch37_dir, url)
 
-	lrun("mkdir -p %s" % (env.mm10_dir))
+	_make_dir(env.mm10_dir)
 	mm10_urls = ["ftp://ftp.ensembl.org/pub/release-67/fasta/mus_musculus/dna/Mus_musculus.NCBIM37.67.dna.toplevel.fa.gz",
 	    "ftp://ftp.ensembl.org/pub/release-67/gtf/mus_musculus/Mus_musculus.NCBIM37.67.gtf.gz", 
 	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__exon_transcript__dm.txt.gz",
@@ -599,7 +598,7 @@ def install_genomes():
 	        _fetch_and_unpack_genome(mm10_dir, url)
 
 def install_testdata():
-	lrun("mkdir -p %s" % env.testfq_dir)
+	_make_dir(env.testfq_dir)
 	fq_urls = ["ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619469/SRR619469.fastq.gz",
 	    "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619470/SRR619470.fastq.gz",
 	    "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619471/SRR619471.fastq.gz",
