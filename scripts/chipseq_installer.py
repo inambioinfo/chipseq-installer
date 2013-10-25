@@ -607,7 +607,7 @@ def install_testdata():
 	    "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619474/SRR619474.fastq.gz"]
 	with cd(env.testfq_dir):
 	    for fq_url in fq_urls:
-	        _fetch(fq_url)
+	        _fetch(env.testfq_dir, fq_url)
 
 def configure_meme():
 	URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/all_data/matrix_only/matrix_only.txt"
