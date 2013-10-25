@@ -160,19 +160,19 @@ def _safe_dir_name(path, dir_name, need_dir=True):
 def _fetch_and_unpack(path, url, need_dir=True, wget_options=None):
     tar_file, dir_name, tar_cmd = _get_expected_file(path, url)
     if not lexists(os.path.join(path, tar_file)):
-        lrun("wget --no-check-certificate %s %s" % (wget_options, url))
+        lrun("wget -r --no-check-certificate %s %s" % (wget_options, url))
         lrun("%s %s" % (tar_cmd, tar_file))
     return _safe_dir_name(path, dir_name, need_dir)
     
 def _fetch(path, url):
     tar_file = os.path.split(url)[-1]
     if not lexists(os.path.join(path, tar_file)):
-        lrun("wget %s -O %s" % (url, os.path.join(path, tar_file)))
+        lrun("wget -r %s -O %s" % (url, os.path.join(path, tar_file)))
 
 def _fetch_and_unpack_genome(path, url):
     tar_file = os.path.split(url)[-1]
     if not lexists(os.path.join(path, tar_file)):
-        lrun("wget %s -O %s" % (url, tar_file))
+        lrun("wget -r %s -O %s" % (url, tar_file))
         lrun("gzip -d -r  %s" % tar_file)
 
 def _configure_make(env, options=None):
