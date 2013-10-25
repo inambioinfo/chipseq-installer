@@ -124,6 +124,9 @@ def _make_dir(path):
 
 def _get_expected_file(url):
     tar_file = os.path.split(url)[-1]
+    # delete tar file if it already exists
+    if lexists(os.path.join(path, tar_file)):
+        lrun("rm -f %s" % os.path.join(path, tar_file))
     safe_tar = "--pax-option='delete=SCHILY.*,delete=LIBARCHIVE.*'"
     exts = {(".tar.gz", ".tgz") : "tar %s -xzpf" % safe_tar,
             (".tar.bz2",): "tar %s -xjpf" % safe_tar,
