@@ -127,7 +127,7 @@ def _get_expected_file(url):
     safe_tar = "--pax-option='delete=SCHILY.*,delete=LIBARCHIVE.*'"
     exts = {(".tar.gz", ".tgz") : "tar %s -xzpf" % safe_tar,
             (".tar.bz2",): "tar %s -xjpf" % safe_tar,
-            (".zip",) : "unzip"}
+            (".zip",) : "unzip -o"}
     for ext_choices, tar_cmd in exts.iteritems():
         for ext in ext_choices:
             if tar_file.endswith(ext):
@@ -460,7 +460,7 @@ def install_macs():
 def install_meme():
     """
     """
-    url = "http://ebi.edu.au/ftp/software/MEME/4/meme_4.9.0.tar.gz"
+    url = "http://ebi.edu.au/ftp/software/MEME/4.9.1/meme_4.9.1.tar.gz"
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
         with lcd(dir_name):
@@ -486,7 +486,7 @@ def install_chipseq():
         if not lexists(env.chipseq_path):
             update = False
             with lcd(os.path.split(env.chipseq_path)[0]):
-                lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH05')
+                lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH07')
         with lcd(env.chipseq_path):
             if update:
                 lrun('svn update')
