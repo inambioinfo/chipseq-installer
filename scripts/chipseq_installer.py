@@ -524,6 +524,7 @@ def update_config():
     config_file = os.path.join(env.chipseq_config_path, "config.ini")
     if os.path.exists(config_file):
         config.read(config_file)
+        inifile = open(config_file, 'w')
 
         config.set("Executables", "meme", os.path.join(env.bin_dir, "meme/bin/meme-chip"))
         config.set("Executables", "python", os.path.join(env.bin_dir, "python"))
@@ -575,7 +576,8 @@ def update_config():
         config.set("Sequence Dictionary", "hg19","")
         config.set("Sequence Dictionary", "mm9","")	
 
-        config.write(config_file)
+        config.write(inifile)
+        inifile.close()
 
 # ================================================================================
 # == Install hg19 and mm10 genomes and Ikaros ChIP test data
