@@ -412,8 +412,7 @@ def install_bedtools():
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
         with lcd(dir_name):
-            lrun("make clean")
-            lrun("make all")
+            lrun("make")
             lrun("find bin/. -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
 def install_picard():
