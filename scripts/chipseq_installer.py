@@ -522,14 +522,12 @@ def update_config():
     import ConfigParser
     config = ConfigParser.SafeConfigParser()
     config_file = os.path.join(env.chipseq_config_path, "config.ini")
-    new_config_file = os.path.join(env.chipseq_config_path, "configNew.ini")
     if os.path.exists(config_file):
         config.read(config_file)
-        inifile = open(new_config_file, 'w')
 
-        config.set("Executables", "meme", os.path.join(env.bin_dir, "/meme/bin/meme-chip"))
+        config.set("Executables", "meme", os.path.join(env.bin_dir, "meme/bin/meme-chip"))
         config.set("Executables", "python", os.path.join(env.bin_dir, "python"))
-        config.set("Executables", "perl", os.path.join(env.bin_dir, "/perl/bin/perl"))
+        config.set("Executables", "perl", os.path.join(env.bin_dir, "perl/bin/perl"))
         config.set("Executables", "bwa", os.path.join(env.bin_dir, "bwa"))
         config.set("Executables", "samtools", os.path.join(env.bin_dir, "samtools"))
         config.set("Executables", "picard", os.path.join(env.bin_dir, "picard"))
@@ -541,14 +539,14 @@ def update_config():
         config.set("Executables", "macs", os.path.join(env.bin_dir, "macs14"))
         config.set("Executables", "ame", os.path.join(env.bin_dir, "ame"))
         config.set("Executables", "sicer", os.path.join(env.bin_dir, "sicer"))
-        config.set("Custom Scripts", "tpicscreatecoverage", os.path.join(env.chipseq_path, "/CRI_TPICS/create_coverage.pl"))
-        config.set("Custom Scripts", "tpicszeta", os.path.join(env.chipseq_path, "/CRI_TPICS/zeta.pl"))
-        config.set("Custom Scripts", "tpics", os.path.join(env.chipseq_path, "/CRI_TPICS/tpic.r"))
+        config.set("Custom Scripts", "tpicscreatecoverage", os.path.join(env.chipseq_path, "CRI_TPICS/create_coverage.pl"))
+        config.set("Custom Scripts", "tpicszeta", os.path.join(env.chipseq_path, "CRI_TPICS/zeta.pl"))
+        config.set("Custom Scripts", "tpics", os.path.join(env.chipseq_path, "CRI_TPICS/tpic.r"))
 
         config.set("Libraries", "rlibs",env.r_lib_dir)
-        config.set("Libraries", "pythonlibs", os.path.join(env.lib_dir,"/python2.7/site-packages/"))
-        config.set("Libraries", "perllibs", os.path.join(env.bin_dir,"/perl/lib/site_perl/5.18.0/"))
-        config.set("Libraries", "javalibs","")
+        config.set("Libraries", "pythonlibs", os.path.join(env.lib_dir, "python2.7/site-packages/"))
+        config.set("Libraries", "perllibs", os.path.join(env.bin_dir, "perl/lib/site_perl/5.18.0/"))
+        config.set("Libraries", "javalibs", "")
 
         config.set("meme parameters", "tfdb", "")
 
@@ -577,8 +575,7 @@ def update_config():
         config.set("Sequence Dictionary", "hg19","")
         config.set("Sequence Dictionary", "mm9","")	
 
-        config.write(inifile)
-        inifile.close()
+        config.write()
 
 # ================================================================================
 # == Install hg19 and mm10 genomes and Ikaros ChIP test data
@@ -620,7 +617,8 @@ def install_testdata():
 	        _fetch(env.testfq_dir, fq_url)
 
 def configure_meme():
-	URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/all_data/matrix_only/matrix_only.txt"
-	lrun("wget -r -np -nH  -R index.html %s " % (URLForJasparAll))
+    with lcd(env.annotation_dir):
+	    URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/all_data/matrix_only/matrix_only.txt"
+	    lrun("wget -r -np -nH  -R index.html %s " % (URLForJasparAll))
 
 
