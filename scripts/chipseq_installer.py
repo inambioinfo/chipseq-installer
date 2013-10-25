@@ -575,7 +575,7 @@ def update_config():
         config.set("Sequence Dictionary", "hg19","")
         config.set("Sequence Dictionary", "mm9","")	
 
-        config.write()
+        config.write(config_file)
 
 # ================================================================================
 # == Install hg19 and mm10 genomes and Ikaros ChIP test data
