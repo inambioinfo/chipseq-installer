@@ -369,15 +369,10 @@ def install_perl_libraries():
             vlrun("make install")
             
 def install_java():
-    """wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" "http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz -O jdk-7-linux-x64.tar.gz"
-    """
-    url = "http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz"
-    wget_options = '--no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" '
+    tar_file = "jdk-7-linux-x64.tar.gz"
     with lcd(env.tmp_dir):
-        lrun('wget --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz -O jdk-7-linux-x64.tar.gz')
-        #dir_name = _fetch_and_unpack(env.tmp_dir, url, True, wget_options)
-        # tar zxvf jre-7u7-linux-x64.tar.gz
-    
+        lrun('wget --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" http://download.oracle.com/otn-pub/java/jdk/7/%s -O %s' % (tar_file, tar_file))
+        lrun ("tar zxvf %s" % tar_file)
 
 def install_workflow():
     """Checkout the workflow manager from repository.
