@@ -126,12 +126,6 @@ def _make_dir(path):
         if lrun("test -d %s" % path).failed:
             lrun("mkdir -p %s" % path)
 
-def _fetch_and_unpack_genome(path, url):
-    tar_file = os.path.split(url)[-1]
-    if not lexists(os.path.join(path, tar_file)):
-        lrun("wget %s -O %s" % (url, tar_file)
-        lrun("gzip -d -r  %s" % tar_file)
-
 def _get_expected_file(path, url):
     tar_file = os.path.split(url)[-1]
     safe_tar = "--pax-option='delete=SCHILY.*,delete=LIBARCHIVE.*'"
@@ -173,7 +167,13 @@ def _fetch_and_unpack(path, url, need_dir=True):
 def _fetch(path, url):
     tar_file = os.path.split(url)[-1]
     if not lexists(os.path.join(path, tar_file)):
-        lrun("wget %s -O %s" % (url, tar_file)
+        lrun("wget %s -O %s" % (url, tar_file))
+
+def _fetch_and_unpack_genome(path, url):
+    tar_file = os.path.split(url)[-1]
+    if not lexists(os.path.join(path, tar_file)):
+        lrun("wget %s -O %s" % (url, tar_file))
+        lrun("gzip -d -r  %s" % tar_file)
 
 def _configure_make(env, options=None):
     if options:
