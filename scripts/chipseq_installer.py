@@ -122,7 +122,7 @@ def _make_dir(path):
         if lrun("test -d %s" % path).failed:
             lrun("mkdir -p %s" % path)
 
-def _get_expected_file(url):
+def _get_expected_file(path, url):
     tar_file = os.path.split(url)[-1]
     # delete tar file if it already exists
     if lexists(os.path.join(path, tar_file)):
@@ -157,7 +157,7 @@ def _safe_dir_name(path, dir_name, need_dir=True):
                     raise ValueError("Could not find directory %s" % dir_name)
 
 def _fetch_and_unpack(path, url, need_dir=True):
-    tar_file, dir_name, tar_cmd = _get_expected_file(url)
+    tar_file, dir_name, tar_cmd = _get_expected_file(path, url)
     if not lexists(tar_file):
         lrun("wget --no-check-certificate %s" % url)
         lrun("%s %s" % (tar_cmd, tar_file))
