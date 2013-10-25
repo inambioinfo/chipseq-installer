@@ -586,7 +586,7 @@ def install_genomes():
 	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__exon_transcript__dm.txt.gz"]
 	with lcd(env.grch37_dir):
 	    for url in grch37_urls:
-	        _fetch_and_unpack_genome(grch37_dir, url)
+	        _fetch_and_unpack_genome(env.grch37_dir, url)
 
 	_make_dir(env.mm10_dir)
 	mm10_urls = ["ftp://ftp.ensembl.org/pub/release-67/fasta/mus_musculus/dna/Mus_musculus.NCBIM37.67.dna.toplevel.fa.gz",
@@ -595,7 +595,7 @@ def install_genomes():
 	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__gene__main.txt.gz"]
 	with lcd(env.mm10_dir):
 	    for url in mm10_urls:
-	        _fetch_and_unpack_genome(mm10_dir, url)
+	        _fetch_and_unpack_genome(env.mm10_dir, url)
 
 def install_testdata():
 	_make_dir(env.testfq_dir)
