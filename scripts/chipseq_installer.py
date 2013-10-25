@@ -369,12 +369,14 @@ def install_perl_libraries():
             vlrun("make install")
             
 def install_java():
-    """wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" "http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz"
+    """wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" "http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz -O jdk-7-linux-x64.tar.gz"
     """
     url = "http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz"
     wget_options = '--no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" '
     with lcd(env.tmp_dir):
-        dir_name = _fetch_and_unpack(env.tmp_dir, url, True, wget_options)
+        lrun('wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" "http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz -O jdk-7-linux-x64.tar.gz')
+        #dir_name = _fetch_and_unpack(env.tmp_dir, url, True, wget_options)
+        # tar zxvf jre-7u7-linux-x64.tar.gz
     
 
 def install_workflow():
