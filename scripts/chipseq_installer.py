@@ -247,6 +247,7 @@ def install_python_libraries():
     #vlrun("pip install scipy==0.12.1")
     vlrun("pip install bx-python==0.7.1")
     vlrun("pip install configparser")
+    vlrun("pip install biopython==1.62")    
     _install_rpy_lib()
 
 @_if_not_python_lib("rpy")
