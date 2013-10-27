@@ -376,6 +376,12 @@ def install_java():
         lrun('wget --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%%3A%%2F%%2Fwww.oracle.com" http://download.oracle.com/otn-pub/java/jdk/7/%s -O %s' % (tar_file, tar_file))
         lrun ("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
 
+def install_rsync():
+    tar_file = "rsync-3.1.0.tar.gz"
+    with lcd(env.tmp_dir):
+        lrun('wget ftp://ftp.samba.org/pub/rsync/%s -O %s' % (tar_file, tar_file))
+        lrun ("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
+
 def install_workflow():
     """Checkout the workflow manager from repository.
     """
@@ -455,7 +461,7 @@ def install_bwa():
     """BWA:  aligns short nucleotide sequences against a long reference sequence.
     http://bio-bwa.sourceforge.net/
     """
-    version = "0.7.5a"
+    version = "0.5.9"
     url = "http://downloads.sourceforge.net/project/bio-bwa/bwa-%s.tar.bz2" % (version)
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
