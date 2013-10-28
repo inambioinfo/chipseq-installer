@@ -373,10 +373,7 @@ def install_perl_libraries():
             
 def install_rsync():
     url = "ftp://ftp.samba.org/pub/rsync/rsync-3.1.0.tar.gz"
-    with lcd(env.tmp_dir):
-        dir_name = _fetch_and_unpack(env.tmp_dir, url)
-        with lcd(dir_name):
-            _get_install(url, env, _configure_make)
+    _get_install(url, env, _configure_make)
 
 def install_java():
     tar_file = "jdk-7-linux-x64.tar.gz"
