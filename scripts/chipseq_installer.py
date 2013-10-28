@@ -161,7 +161,7 @@ def _safe_dir_name(path, dir_name, need_dir=True):
 def _fetch_and_unpack(path, url, need_dir=True, wget_options=''):
     tar_file, dir_name, tar_cmd = _get_expected_file(path, url)
     if not lexists(os.path.join(path, tar_file)):
-        lrun("wget -r --no-check-certificate %s %s" % (wget_options, url))
+        lrun("wget --no-check-certificate %s %s" % (wget_options, url))
         lrun("%s %s" % (tar_cmd, tar_file))
     return _safe_dir_name(path, dir_name, need_dir)
     
