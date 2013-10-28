@@ -372,10 +372,11 @@ def install_perl_libraries():
             vlrun("make install")
             
 def install_rsync():
-    tar_file = "rsync-3.1.0.tar.gz"
+    url = "ftp://ftp.samba.org/pub/rsync/rsync-3.1.0.tar.gz"
     with lcd(env.tmp_dir):
-        lrun('wget ftp://ftp.samba.org/pub/rsync/%s -O %s' % (tar_file, tar_file))
-        lrun("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
+            _get_install(url, env, _configure_make)
 
 def install_java():
     tar_file = "jdk-7-linux-x64.tar.gz"
@@ -538,16 +539,18 @@ def update_config():
         config.set("Executables", "bwa", os.path.join(env.bin_dir, "bwa"))
         config.set("Executables", "samtools", os.path.join(env.bin_dir, "samtools"))
         config.set("Executables", "picard", os.path.join(env.bin_dir, "picard"))
-        config.set("Executables", "rsync", "rsync")
+        config.set("Executables", "rsync", os.path.join(env.bin_dir, "rsync"))
         config.set("Executables", "bedtools", os.path.join(env.bin_dir, "bedtools"))
-        config.set("Executables", "java", "java")
+        config.set("Executables", "java", os.path.join(env.lib_dir, "jdk1.7.0/bin/java"))
         config.set("Executables", "rexec", os.path.join(env.bin_dir, "R"))
         config.set("Executables", "bigwig", os.path.join(env.bin_dir, "bedGraphToBigWig"))
         config.set("Executables", "macs", os.path.join(env.bin_dir, "macs14"))
         config.set("Executables", "ame", os.path.join(env.bin_dir, "ame"))
         config.set("Executables", "sicer", os.path.join(env.bin_dir, "sicer"))
 
-        config.set("Libraries", "rlibs",env.r_lib_dir)
+        config.set("Workflow", "executable", os.path.join(env.lib_dir, "workflow-manager/workflow-all-1.2-SNAPSHOT.jar"))
+        
+        config.set("Libraries", "rlibs", env.r_lib_dir)
         config.set("Libraries", "pythonlibs", os.path.join(env.lib_dir, "python2.7/site-packages/"))
         config.set("Libraries", "perllibs", os.path.join(env.bin_dir, "perl/lib/site_perl/5.18.0/"))
         config.set("Libraries", "javalibs", "")
