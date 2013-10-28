@@ -34,6 +34,7 @@ cran:
  - tractor.base
  - caTools
  - gdata
+ - optparse
 
 biocrepo: http://bioconductor.org/biocLite.R
 bioc:
