@@ -229,6 +229,7 @@ def install_dependencies():
     install_perl()
     install_perl_libraries()
     install_python_libraries()
+    install_rsync()
     install_java()
     install_workflow()
 
@@ -370,17 +371,17 @@ def install_perl_libraries():
             lrun("make")
             vlrun("make install")
             
-def install_java():
-    tar_file = "jdk-7-linux-x64.tar.gz"
-    with lcd(env.tmp_dir):
-        lrun('wget --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%%3A%%2F%%2Fwww.oracle.com" http://download.oracle.com/otn-pub/java/jdk/7/%s -O %s' % (tar_file, tar_file))
-        lrun ("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
-
 def install_rsync():
     tar_file = "rsync-3.1.0.tar.gz"
     with lcd(env.tmp_dir):
         lrun('wget ftp://ftp.samba.org/pub/rsync/%s -O %s' % (tar_file, tar_file))
         lrun("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
+
+def install_java():
+    tar_file = "jdk-7-linux-x64.tar.gz"
+    with lcd(env.tmp_dir):
+        lrun('wget --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%%3A%%2F%%2Fwww.oracle.com" http://download.oracle.com/otn-pub/java/jdk/7/%s -O %s' % (tar_file, tar_file))
+        lrun ("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
 
 def install_workflow():
     """Checkout the workflow manager from repository.
