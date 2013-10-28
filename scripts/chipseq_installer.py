@@ -539,7 +539,7 @@ def update_config():
         config.set("Executables", "rsync", os.path.join(env.bin_dir, "rsync"))
         config.set("Executables", "bedtools", os.path.join(env.bin_dir, "bedtools"))
         config.set("Executables", "java", os.path.join(env.lib_dir, "jdk1.7.0/bin/java"))
-        config.set("Executables", "rexec", os.path.join(env.bin_dir, "R"))
+        config.set("Executables", "rexec", os.path.join(env.bin_dir, "Rscript"))
         config.set("Executables", "bigwig", os.path.join(env.bin_dir, "bedGraphToBigWig"))
         config.set("Executables", "macs", os.path.join(env.bin_dir, "macs14"))
         config.set("Executables", "ame", os.path.join(env.bin_dir, "ame"))
