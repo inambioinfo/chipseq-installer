@@ -158,7 +158,7 @@ def _safe_dir_name(path, dir_name, need_dir=True):
                 if need_dir:
                     raise ValueError("Could not find directory %s" % dir_name)
 
-def _fetch_and_unpack(path, url, need_dir=True, wget_options=None):
+def _fetch_and_unpack(path, url, need_dir=True, wget_options=''):
     tar_file, dir_name, tar_cmd = _get_expected_file(path, url)
     if not lexists(os.path.join(path, tar_file)):
         lrun("wget -r --no-check-certificate %s %s" % (wget_options, url))
@@ -380,7 +380,7 @@ def install_rsync():
     tar_file = "rsync-3.1.0.tar.gz"
     with lcd(env.tmp_dir):
         lrun('wget ftp://ftp.samba.org/pub/rsync/%s -O %s' % (tar_file, tar_file))
-        lrun ("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
+        lrun("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
 
 def install_workflow():
     """Checkout the workflow manager from repository.
