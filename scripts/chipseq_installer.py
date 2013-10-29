@@ -47,7 +47,7 @@ env.lib_dir = os.path.join(env.project_dir, 'lib')
 env.annotation_dir = os.path.join(env.project_dir, 'annotation')
 env.grch37_dir = os.path.join(env.annotation_dir, "grch37_ensembl")
 env.mm10_dir = os.path.join(env.annotation_dir, "mm10_Ensembl")
-env.testfq_dir = os.path.join(env.project_dir, "test", "fqdirectory")
+env.testfq_dir = os.path.join(env.project_dir, "chipseq-test", "fqdirectory")
 env.r_lib_dir = os.path.join(env.project_dir, 'lib/R/library')
 env.perl_dir = os.path.join(env.bin_dir, 'perl')
 env.meme_dir = os.path.join(env.bin_dir, 'meme')
@@ -417,6 +417,7 @@ def install_ucsc_tools():
     """
     tools = ["liftOver", "faToTwoBit", "twoBitToFa", "bedToBigBed", "wigToBigWig", "bedGraphToBigWig"]
     url = "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/"
+    src_url = "ftp://hgdownload.cse.ucsc.edu/apache/htdocs/admin/exe/userApps.src.tgz"
     for tool in tools:
         with lcd(env.bin_dir):
             if not lexists(os.path.join(env.bin_dir, tool)):
@@ -518,6 +519,8 @@ def install_chipseq_pipeline():
             update = False
             with lcd(os.path.split(env.chipseq_path)[0]):
                 lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH07/Process10 Process10')
+                lrun("chmod a+rwx RScripts/Kick.r")
+                lrun("( ( echo '%s --vanilla' ; sed '1d' RScripts/Kick.r ) > RScripts/Kick.new.r ) ; mv RScripts/Kick.new.r RScripts/Kick.r" % (os.path.join(env.bin_dir, "Rscript"), ))
         with lcd(env.chipseq_path):
             if update:
                 lrun('svn update')
@@ -545,7 +548,7 @@ def update_config():
         config.set("Executables", "ame", os.path.join(env.bin_dir, "ame"))
         config.set("Executables", "sicer", os.path.join(env.bin_dir, "sicer"))
 
-        config.set("Workflow", "executable", os.path.join(env.lib_dir, "workflow-manager/workflow-all-1.2-SNAPSHOT.jar"))
+        config.set("Workflow", "executable", os.path.join(env.lib_dir, "workflow-manager/workflow-all-1.4-SNAPSHOT.jar"))
         
         config.set("Libraries", "rlibs", env.r_lib_dir)
         config.set("Libraries", "pythonlibs", os.path.join(env.lib_dir, "python2.7/site-packages/"))
@@ -610,6 +613,8 @@ def install_genomes():
 	        _fetch_and_unpack_genome(env.mm10_dir, url)
 
 def install_testdata():
+    with lcd(env.project_dir):
+         lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/chipseq-test/ chipseq-test')
 	_make_dir(env.testfq_dir)
 	fq_urls = ["ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619469/SRR619469.fastq.gz",
 	    "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619470/SRR619470.fastq.gz",
