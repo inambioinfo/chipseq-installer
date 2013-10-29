@@ -614,7 +614,8 @@ def install_genomes():
 
 def install_testdata():
     with lcd(env.project_dir):
-         lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/chipseq-test/ chipseq-test')
+        lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/chipseq-test/ chipseq-test')
+    
 	_make_dir(env.testfq_dir)
 	fq_urls = ["ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619469/SRR619469.fastq.gz",
 	    "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619470/SRR619470.fastq.gz",
