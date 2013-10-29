@@ -520,7 +520,7 @@ def install_chipseq_pipeline():
             with lcd(os.path.split(env.chipseq_path)[0]):
                 lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH07/Process10 Process10')
                 lrun("chmod a+rwx Process10/RScripts/Kick.r")
-                lrun("( ( echo '%s --vanilla' ; sed '1d' Process10/RScripts/Kick.r ) > Process10/RScripts/Kick.new.r ) ; mv Process10/RScripts/Kick.new.r Process10/RScripts/Kick.r" % (os.path.join(env.bin_dir, "Rscript"), ))
+                lrun("( ( echo '#!%s --vanilla' ; sed '1d' Process10/RScripts/Kick.r ) > Process10/RScripts/Kick.new.r ) ; mv Process10/RScripts/Kick.new.r Process10/RScripts/Kick.r" % (os.path.join(env.bin_dir, "Rscript"), ))
         with lcd(env.chipseq_path):
             if update:
                 lrun('svn update')
