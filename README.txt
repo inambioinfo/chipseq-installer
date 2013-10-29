@@ -60,3 +60,9 @@ and follow the instructions
 to follow the installation do
 > tail -f chipseq_installer.out
 
+--------------------------------------------------------------------------------
+-- Testing...
+--------------------------------------------------------------------------------
+> cd test
+> ../Process10/RScripts/Kick.r --genome mm10 --callMacsPeaks Yes --callMacsMotifs Yes
+
