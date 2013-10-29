@@ -540,7 +540,7 @@ def update_config():
         config.set("Executables", "samtools", os.path.join(env.bin_dir, "samtools"))
         config.set("Executables", "picard", os.path.join(env.bin_dir, "picard"))
         config.set("Executables", "rsync", os.path.join(env.bin_dir, "rsync"))
-        config.set("Executables", "bedtools",env.bin_dir))
+        config.set("Executables", "bedtools", env.bin_dir)
         config.set("Executables", "java", os.path.join(env.lib_dir, "jdk1.7.0/bin/java"))
         config.set("Executables", "rexec", os.path.join(env.bin_dir, "Rscript"))
         config.set("Executables", "bigwig", os.path.join(env.bin_dir, "bedGraphToBigWig"))
