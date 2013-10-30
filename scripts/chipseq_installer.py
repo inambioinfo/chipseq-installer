@@ -528,7 +528,7 @@ def install_chipseq_pipeline():
             with lcd(os.path.split(env.chipseq_path)[0]):
                 lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH07/Process10 Process10')
         with lcd(env.chipseq_path):
-            lrun("( ( echo 'RLIBSVar = \"%s\"' ; echo '#!%s --vanilla' ; sed '1,2d' RScripts/Kick.r ) > RScripts/ChipSeq.r )" % (env.r_lib_dir, os.path.join(env.bin_dir, "Rscript") ))
+            lrun("( ( echo '#!%s --vanilla' ; echo 'RLIBSVar = \"%s\"' ; sed '1,2d' RScripts/Kick.r ) > RScripts/ChipSeq.r )" % (os.path.join(env.bin_dir, "Rscript"), env.r_lib_dir ))
             lrun("chmod a+x RScripts/ChipSeq.r")
             if update:
                 lrun('svn update')
