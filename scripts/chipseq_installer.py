@@ -569,9 +569,9 @@ def update_config():
         config.set("Genomes", "hg18", "")
         config.set("Genomes", "mm9", os.path.join(env.mm9_dir, "Mus_musculus.NCBIM37.67.dna.toplevel.fa"))
         
-        config.set("Gene Positions", "grch37", ":".join(os.path.join(env.mm9_dir, "Homo_sapiens.GRCh37.67.gtf"), os.path.join(env.mm9_dir, "hsapiens_gene_ensembl__transcript__main.txt")))
+        config.set("Gene Positions", "grch37", ":".join([os.path.join(env.mm9_dir, "Homo_sapiens.GRCh37.67.gtf"), os.path.join(env.mm9_dir, "hsapiens_gene_ensembl__transcript__main.txt")]))
         config.set("Gene Positions", "hg18", "")
-        config.set("Gene Positions", "mm9", ":".join(os.path.join(env.mm9_dir, "Mus_musculus.NCBIM37.67.gtf"), os.path.join(env.mm9_dir, "mmusculus_gene_ensembl__transcript__main.txt")))
+        config.set("Gene Positions", "mm9", ":".join([os.path.join(env.mm9_dir, "Mus_musculus.NCBIM37.67.gtf"), os.path.join(env.mm9_dir, "mmusculus_gene_ensembl__transcript__main.txt")]))
         
         config.set("Excluded Regions", "grch37", "")
         config.set("Excluded Regions", "hg18", "")
