@@ -34,7 +34,7 @@ Get installer code
 -- 2. Before you start...
 --------------------------------------------------------------------------------
 
-- edit env.bashrc
+- edit chipseq-build/env.bashrc
 modify CHIPSEQ_ROOT=/home/pajon01/chipseq-test/ 
 to represent the root of your project so one level above this one where this README is.
 
