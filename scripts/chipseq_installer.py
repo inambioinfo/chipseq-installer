@@ -46,7 +46,7 @@ env.bin_dir = os.path.join(env.project_dir, 'bin')
 env.lib_dir = os.path.join(env.project_dir, 'lib')
 env.annotation_dir = os.path.join(env.project_dir, 'annotation')
 env.grch37_dir = os.path.join(env.annotation_dir, "grch37_ensembl")
-env.mm10_dir = os.path.join(env.annotation_dir, "mm10_Ensembl")
+env.mm9_dir = os.path.join(env.annotation_dir, "mm9_Ensembl")
 env.testfq_dir = os.path.join(env.project_dir, "chipseq-test", "fqdirectory")
 env.r_lib_dir = os.path.join(env.project_dir, 'lib/R/library')
 env.perl_dir = os.path.join(env.bin_dir, 'perl')
@@ -415,7 +415,7 @@ def install_ucsc_tools():
     see https://github.com/chapmanb/cloudbiolinux/blob/master/cloudbio/custom/bio_nextgen.py
     for an up-to-date version
     """
-    tools = ["liftOver", "faToTwoBit", "twoBitToFa", "bedToBigBed", "wigToBigWig", "bedGraphToBigWig"]
+    tools = ["liftOver", "faToTwoBit", "twoBitToFa", "bedToBigBed", "wigToBigWig"]
     url = "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/"
     src_url = "ftp://hgdownload.cse.ucsc.edu/apache/htdocs/admin/exe/userApps.src.tgz"
     for tool in tools:
@@ -423,6 +423,14 @@ def install_ucsc_tools():
             if not lexists(os.path.join(env.bin_dir, tool)):
                 lrun("wget %s%s" % (url, tool))
                 lrun("chmod a+rwx %s" % tool)
+    # special installation for bedGraphToBigWig due to error while loading shared libraries: libssl.so.10
+    url2 = "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64.v287/"
+    tool = "bedGraphToBigWig"
+    with lcd(env.bin_dir):
+        if not lexists(os.path.join(env.bin_dir, tool)):
+            lrun("wget %s%s" % (url, tool))
+            lrun("chmod a+rwx %s" % tool)
+            
 
 def install_samtools():
     """Install samtools 0.1.18
@@ -519,9 +527,9 @@ def install_chipseq_pipeline():
             update = False
             with lcd(os.path.split(env.chipseq_path)[0]):
                 lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH07/Process10 Process10')
-                lrun("( ( echo '#!%s --vanilla' ; sed '1d' Process10/RScripts/Kick.r ) > Process10/RScripts/Kick.new.r ) ; mv Process10/RScripts/Kick.new.r Process10/RScripts/Kick.r" % (os.path.join(env.bin_dir, "Rscript"), ))
-                lrun("chmod a+x Process10/RScripts/Kick.r")
         with lcd(env.chipseq_path):
+            lrun("( ( echo 'RLIBSVar = \"%s\"' ; echo '#!%s --vanilla' ; sed '1,2d' RScripts/Kick.r ) > RScripts/ChipSeq.r )" % (env.r_lib_dir, os.path.join(env.bin_dir, "Rscript") ))
+            lrun("chmod a+x RScripts/ChipSeq.r")
             if update:
                 lrun('svn update')
 
@@ -558,29 +566,28 @@ def update_config():
         config.set("meme parameters", "tfdb", "")
 
         config.set("Genomes", "grch37", os.path.join(env.grch37_dir, "Homo_sapiens.GRCh37.67.dna.toplevel.fa"))
-        config.set("Genomes", "mm10", os.path.join(env.mm10_dir, "Mus_musculus.NCBIM37.67.dna.toplevel.fa"))
-        config.set("Genomes", "mm9", "")
         config.set("Genomes", "hg18", "")
+        config.set("Genomes", "mm9", os.path.join(env.mm9_dir, "Mus_musculus.NCBIM37.67.dna.toplevel.fa"))
+        
+        config.set("Gene Positions", "grch37", ":".join(os.path.join(env.mm9_dir, "Homo_sapiens.GRCh37.67.gtf"), os.path.join(env.mm9_dir, "hsapiens_gene_ensembl__transcript__main.txt")))
+        config.set("Gene Positions", "hg18", "")
+        config.set("Gene Positions", "mm9", ":".join(os.path.join(env.mm9_dir, "Mus_musculus.NCBIM37.67.gtf"), os.path.join(env.mm9_dir, "mmusculus_gene_ensembl__transcript__main.txt")))
+        
+        config.set("Excluded Regions", "grch37", "")
+        config.set("Excluded Regions", "hg18", "")
+        config.set("Excluded Regions", "mm9", "")
 
-        config.set("Excluded Regions", "grch37","")
-        config.set("Excluded Regions", "mm10","")
-        config.set("Excluded Regions", "hg19","")
-        config.set("Excluded Regions", "mm9","")
+        config.set("ExcludedRegions", "grch37", "")
+        config.set("ExcludedRegions", "hg18", "")
+        config.set("ExcludedRegions", "mm9", "")
 
-        config.set("ExcludedRegions", "grch37","")
-        config.set("ExcludedRegions", "mm10","")
-        config.set("ExcludedRegions", "hg19","")
-        config.set("ExcludedRegions", "mm9","")
+        config.set("Chromosome Lengths", "grch37", "")
+        config.set("Chromosome Lengths", "hg18", "")
+        config.set("Chromosome Lengths", "mm9", "")	
 
-        config.set("Chromosome Lengths", "grch37","")
-        config.set("Chromosome Lengths", "mm10","")
-        config.set("Chromosome Lengths", "hg19","")
-        config.set("Chromosome Lengths", "mm9","")	
-
-        config.set("Sequence Dictionary", "grch37","")
-        config.set("Sequence Dictionary", "mm10","")
-        config.set("Sequence Dictionary", "hg19","")
-        config.set("Sequence Dictionary", "mm9","")	
+        config.set("Sequence Dictionary", "grch37", "")
+        config.set("Sequence Dictionary", "hg18", "")
+        config.set("Sequence Dictionary", "mm9", "")	
 
         config.write(inifile)
         inifile.close()
@@ -597,20 +604,20 @@ def install_genomes():
 	_make_dir(env.grch37_dir)
 	grch37_urls = ["ftp://ftp.ensembl.org/pub/release-67/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.67.dna.toplevel.fa.gz", 
 	    "ftp://ftp.ensembl.org/pub/release-67/gtf/homo_sapiens/Homo_sapiens.GRCh37.67.gtf.gz",
-	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__gene__main.txt.gz",
-	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__exon_transcript__dm.txt.gz"]
+	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__exon_transcript__dm.txt.gz",
+	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/hsapiens_gene_ensembl__transcript__main.txt.gz"]
 	with lcd(env.grch37_dir):
 	    for url in grch37_urls:
 	        _fetch_and_unpack_genome(env.grch37_dir, url)
 
-	_make_dir(env.mm10_dir)
-	mm10_urls = ["ftp://ftp.ensembl.org/pub/release-67/fasta/mus_musculus/dna/Mus_musculus.NCBIM37.67.dna.toplevel.fa.gz",
+	_make_dir(env.mm9_dir)
+	mm9_urls = ["ftp://ftp.ensembl.org/pub/release-67/fasta/mus_musculus/dna/Mus_musculus.NCBIM37.67.dna.toplevel.fa.gz",
 	    "ftp://ftp.ensembl.org/pub/release-67/gtf/mus_musculus/Mus_musculus.NCBIM37.67.gtf.gz", 
 	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__exon_transcript__dm.txt.gz",
-	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__gene__main.txt.gz"]
-	with lcd(env.mm10_dir):
-	    for url in mm10_urls:
-	        _fetch_and_unpack_genome(env.mm10_dir, url)
+	    "ftp://ftp.ensembl.org/pub/release-67/mysql/ensembl_mart_67/mmusculus_gene_ensembl__transcript__main.txt.gz"]
+	with lcd(env.mm9_dir):
+	    for url in mm9_urls:
+	        _fetch_and_unpack_genome(env.mm9_dir, url)
 
 def install_testdata():
     with lcd(env.project_dir):
