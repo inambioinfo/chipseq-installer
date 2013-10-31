@@ -248,7 +248,10 @@ def install_atlas()::
     # mkdir /home/pajon01/chipseq-test5/lib/atlas
     # ../configure -b 64 -D c -DPentiumCPS=2400 --shared --prefix=/home/pajon01/chipseq-test5/lib/atlas --with-netlib-lapack-tarfile=/home/pajon01/chipseq-test5/tmp/lapack-3.4.1.tgz
     # make build
-    
+    # make check
+    # make ptcheck
+    # make install
+    # all shared lib needs to be moved from lib/atlas/lib to lib/atlas to be picked up by scipy installer
     pass
     
 def install_python_libraries():
