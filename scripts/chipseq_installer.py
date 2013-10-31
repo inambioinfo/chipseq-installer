@@ -223,17 +223,31 @@ def install_dependencies():
     - R & libraries
     - Perl & libraries
     - Python libraries: NumPy, Cython, NumExpr, PyTables, RPy, RPy2, bx-python
+    - Java
     - Rich Bowers' workflow
     """
     install_r()
     install_r_libraries()
     install_perl()
     install_perl_libraries()
+    install_atlas()
     install_python_libraries()
     install_rsync()
     install_java()
     install_workflow()
 
+def install_atlas()::
+    # wget http://sourceforge.net/projects/math-atlas/files/Stable/3.10.1/atlas3.10.1.tar.bz2
+    # wget http://www.netlib.org/lapack/lapack-3.4.2.tgz
+    # tar -xvjf atlas3.10.1.tar.bz2
+    # mv ATLAS ATLAS3.10.1
+    # cd ATLAS3.10.1
+    # mkdir Linux_C2D64SSE3
+    # cd Linux_C2D64SSE3
+    # mkdir /home/pajon01/chipseq-test5/lib/atlas
+    # ../configure -b 64 -D c -DPentiumCPS=2400 --prefix=/home/pajon01/chipseq-test5/lib/atlas --with-netlib-lapack-tarfile=/home/pajon01/chipseq-test5/tmp/lapack-3.4.2.tgz
+    pass
+    
 def install_python_libraries():
     """Install Python libraries
     """
@@ -529,7 +543,7 @@ def install_chipseq_pipeline():
             with lcd(os.path.split(env.chipseq_path)[0]):
                 lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH07/Process10 Process10')
         with lcd(env.chipseq_path):
-            lrun("( ( echo '#!%s --vanilla' ; echo 'RLIBSVar = \"%s\"' ; sed '1,2d' RScripts/Kick.r ) > RScripts/ChipSeq.r )" % (os.path.join(env.bin_dir, "Rscript"), env.r_lib_dir ))
+            lrun("( ( echo '#!/usr/bin/env Rscript' ; echo 'RLIBSVar = \"%s\"' ; sed '1,2d' RScripts/Kick.r ) > RScripts/ChipSeq.r )" % env.r_lib_dir)
             lrun("chmod a+x RScripts/ChipSeq.r")
             if update:
                 lrun('svn update')
