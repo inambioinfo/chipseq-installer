@@ -233,19 +233,22 @@ def install_dependencies():
     install_atlas()
     install_python_libraries()
     install_rsync()
+    install_git()
     install_java()
     install_workflow()
 
 def install_atlas()::
     # wget http://sourceforge.net/projects/math-atlas/files/Stable/3.10.1/atlas3.10.1.tar.bz2
-    # wget http://www.netlib.org/lapack/lapack-3.4.2.tgz
+    # wget http://www.netlib.org/lapack/lapack-3.4.1.tgz
     # tar -xvjf atlas3.10.1.tar.bz2
     # mv ATLAS ATLAS3.10.1
     # cd ATLAS3.10.1
     # mkdir Linux_C2D64SSE3
     # cd Linux_C2D64SSE3
     # mkdir /home/pajon01/chipseq-test5/lib/atlas
-    # ../configure -b 64 -D c -DPentiumCPS=2400 --prefix=/home/pajon01/chipseq-test5/lib/atlas --with-netlib-lapack-tarfile=/home/pajon01/chipseq-test5/tmp/lapack-3.4.2.tgz
+    # ../configure -b 64 -D c -DPentiumCPS=2400 --shared --prefix=/home/pajon01/chipseq-test5/lib/atlas --with-netlib-lapack-tarfile=/home/pajon01/chipseq-test5/tmp/lapack-3.4.1.tgz
+    # make build
+    
     pass
     
 def install_python_libraries():
@@ -389,6 +392,14 @@ def install_perl_libraries():
 def install_rsync():
     url = "ftp://ftp.samba.org/pub/rsync/rsync-3.1.0.tar.gz"
     _get_install(url, env, _configure_make)
+    
+def install_git():
+    url = "https://github.com/git/git/archive/v1.8.4.2.tar.gz"
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
+            lrun("make prefix=%s all" % env.project_dir)
+            lrun("make prefix=%s install" % env.project_dir)
 
 def install_java():
     tar_file = "jdk-7-linux-x64.tar.gz"
