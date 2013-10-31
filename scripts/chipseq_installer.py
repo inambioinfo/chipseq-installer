@@ -79,6 +79,7 @@ def deploy():
     install_tools()
     install_data()
     install_chipseq()
+    install_test()
 
 # ================================================================================
 # == Decorators and context managers
@@ -593,11 +594,10 @@ def update_config():
         inifile.close()
 
 # ================================================================================
-# == Install hg19 and mm10 genomes and Ikaros ChIP test data
+# == Install hg19 and mm9 genomes 
 
 def install_data():
     install_genomes()
-    install_testdata()
     configure_meme()
 
 def install_genomes():
@@ -619,10 +619,18 @@ def install_genomes():
 	    for url in mm9_urls:
 	        _fetch_and_unpack_genome(env.mm9_dir, url)
 
-def install_testdata():
+def configure_meme():
+    with lcd(env.annotation_dir):
+	    URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/all_data/matrix_only/matrix_only.txt"
+	    lrun("wget -r -np -nH  -R index.html %s " % (URLForJasparAll))
+
+# ================================================================================
+# == Install Ikaros ChIP test data
+
+def install_test():
     with lcd(env.project_dir):
         lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/chipseq-test/ chipseq-test')
-    
+
 def fetch_testdata():
 	_make_dir(env.testfq_dir)
 	fq_urls = ["ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619469/SRR619469.fastq.gz",
@@ -635,9 +643,5 @@ def fetch_testdata():
 	    for fq_url in fq_urls:
 	        _fetch(env.testfq_dir, fq_url)
 
-def configure_meme():
-    with lcd(env.annotation_dir):
-	    URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/all_data/matrix_only/matrix_only.txt"
-	    lrun("wget -r -np -nH  -R index.html %s " % (URLForJasparAll))
 
 
