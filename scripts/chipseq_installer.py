@@ -237,7 +237,7 @@ def install_dependencies():
     install_java()
     install_workflow()
 
-def install_atlas()::
+def install_atlas():
     # wget http://sourceforge.net/projects/math-atlas/files/Stable/3.10.1/atlas3.10.1.tar.bz2
     # wget http://www.netlib.org/lapack/lapack-3.4.1.tgz
     # tar -xvjf atlas3.10.1.tar.bz2
