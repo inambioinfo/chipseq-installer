@@ -21,6 +21,16 @@ We are sorry but you will need to have these installed before we can start...
 Write about striping
 
 --------------------------------------------------------------------------------
+-- Warnings
+--------------------------------------------------------------------------------
+
+- UCSC Tool bedGraphToBigWig
+We are getting a special binary for bedGraphToBigWig due to an error
+while loading shared libraries: libssl.so.10 with the default one. It is coming
+from the UCSC url finishing by linux.x86_64.v287 instead of the default 
+linux.x86_64 hoping that your system is like ours, not fully up to date.
+
+--------------------------------------------------------------------------------
 -- 1. Before you have any of our codes on your computer...
 --------------------------------------------------------------------------------
 
