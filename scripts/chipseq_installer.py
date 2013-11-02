@@ -602,13 +602,13 @@ def update_config():
         config.set("Gene Positions", "hg18", "")
         config.set("Gene Positions", "mm9", ":".join([os.path.join(env.mm9_dir, "Mus_musculus.NCBIM37.67.gtf"), os.path.join(env.mm9_dir, "mmusculus_gene_ensembl__transcript__main.txt")]))
         
-        config.set("Excluded Regions", "grch37", "")
-        config.set("Excluded Regions", "hg18", "")
-        config.set("Excluded Regions", "mm9", "")
+        config.set("Excluded Regions", "grch37", "No_Excluded")
+        config.set("Excluded Regions", "hg18", "No_Excluded")
+        config.set("Excluded Regions", "mm9", "No_Excluded")
 
-        config.set("ExcludedRegions", "grch37", "")
-        config.set("ExcludedRegions", "hg18", "")
-        config.set("ExcludedRegions", "mm9", "")
+        config.set("ExcludedRegions", "grch37", "No_Excluded")
+        config.set("ExcludedRegions", "hg18", "No_Excluded")
+        config.set("ExcludedRegions", "mm9", "No_Excluded")
 
         config.set("Chromosome Lengths", "grch37", "")
         config.set("Chromosome Lengths", "hg18", "")
