@@ -397,7 +397,7 @@ def install_rsync():
     _get_install(url, env, _configure_make)
     
 def install_git():
-    url = "https://github.com/git/git/archive/v1.8.4.2.tar.gz"
+    url = "http://git-core.googlecode.com/files/git-1.8.4.2.tar.gz"
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
         with lcd(dir_name):
