@@ -617,7 +617,7 @@ def update_config():
         config.set("Libraries", "perllibs", os.path.join(env.bin_dir, "perl/lib/site_perl/5.18.0/"))
         config.set("Libraries", "javalibs", "")
 
-        config.set("meme parameters", "tfdb", "")
+        config.set("meme parameters", "tfdb", os.path.join(env.annotation_dir, "jaspar_CORE/Jaspar_NonRedunadant.meme"))
 
         config.set("Genomes", "grch37", os.path.join(env.grch37_dir, "Homo_sapiens.GRCh37.67.dna.toplevel.fa"))
         config.set("Genomes", "hg18", "")
@@ -677,8 +677,9 @@ def configure_meme():
 	    URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/jaspar_CORE/non_redundant/all_species/FlatFileDir/"
 	    lrun("wget -r -nH --cut-dirs=2 --no-parent --reject=\"index.html*\" %s " % (URLForJasparAll))
 	    JasparLocation = os.path.join(env.annotation_dir, "jaspar_CORE/non_redundant/all_species/FlatFileDir/") 
-	    ConvertCMD = os.path.join(env.bin_dir, "meme/bin/jaspar2meme")
-	    lrun("%s %s" % (ConvertCMD,JasparLocation))
+	    MemeJasparLocation = os.path.join(env.annotation_dir, "jaspar_CORE/Jaspar_NonRedunadant.meme") 
+	    ConvertCMD = os.path.join(env.bin_dir, "meme/bin/jaspar2meme  -pfm")
+	    lrun("%s %s > %s" % (ConvertCMD,JasparLocation,MemeJasparLocation))
 	    
 
 # ================================================================================
