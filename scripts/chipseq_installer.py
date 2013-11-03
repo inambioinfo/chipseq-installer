@@ -364,9 +364,34 @@ def install_r_libraries():
     
     """ % env
     lrun("echo '%s' >> %s" % (GMC_install2, out_file))       
+
+
+    hmisc_install = """
+    download.file(\"http://cran.r-project.org/src/contrib/Archive/Hmisc/Hmisc_3.10-1.1.tar.gz\",\"%(tmp_dir)s/Hmisc_3.10-1.1.tar.gz\")   
+    """ % env
+    lrun("echo '%s' >> %s" % (hmisc_install, out_file))
+    hmisc_install2 = """
+    install.packages(\"%(tmp_dir)s/Hmisc_3.10-1.1.tar.gz\",lib=\"%(r_lib_dir)s\")
+    """ % env
+    lrun("echo '%s' >> %s" % (hmisc_install2, out_file))       
+
+
+    gdd_install = """
+    download.file(\"http://www.rforge.net/src/contrib/GDD_0.1-13.tar.gz\",\"%(tmp_dir)s/GDD_0.1-13.tar.gz\")   
+    """ % env
+    lrun("echo '%s' >> %s" % (gdd_install, out_file))
+    gdd_install2 = """
+    install.packages(\"%(tmp_dir)s/GDD_0.1-13.tar.gz\",lib=\"%(r_lib_dir)s\")
+    """ % env
+    lrun("echo '%s' >> %s" % (gdd_install2, out_file))       
+
+
     # Run the script and then get rid of it
     vlrun("%s %s" % (os.path.join(env.bin_dir, "Rscript"),out_file))
     #lrun("rm -f %s" % out_file)
+
+
+
 
 def install_perl():
     """Install perl
