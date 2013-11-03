@@ -674,8 +674,13 @@ def install_genomes():
 
 def configure_meme():
     with lcd(env.annotation_dir):
-	    URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/all_data/matrix_only/matrix_only.txt"
+	    URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/jaspar_CORE/non_redundant/all_species/FlatFileDir/"
 	    lrun("wget -r -np -nH  -R index.html %s " % (URLForJasparAll))
+	    JasparLocation = os.path.join(env.annotation_dir, "jaspar_CORE/non_redundant/all_species/FlatFileDir/") 
+	    ConvertCMD = os.path.join(env.bin_dir, "meme/bin/jaspar2meme")
+	    lrun("%s %s" % (ConvertCMD,JasparLocation))
+	    
+	    
 
 # ================================================================================
 # == Install Ikaros ChIP test data
