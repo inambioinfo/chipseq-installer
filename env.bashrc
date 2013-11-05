@@ -12,8 +12,15 @@ export PATH=${CHIPSEQ_ROOT}/bin:${PATH}
 # Python virtualenv
 source ${CHIPSEQ_ROOT}/bin/activate
 
+# R libraries
 export R_LIBS=${CHIPSEQ_ROOT}/lib/R/library
 
+# Perl libraries
+export PERLLIB=${CHIPSEQ_ROOT}/bin/perl/lib
+export PERL5LIB=${CHIPSEQ_ROOT}/bin/perl/lib
+export PERL_MM_USE_DEFAULT=1
+
+# Python path
 export PYTHONPATH=
 
 # LD Library path

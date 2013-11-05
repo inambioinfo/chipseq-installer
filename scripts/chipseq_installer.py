@@ -407,14 +407,12 @@ def install_perl():
 def install_perl_libraries():
     """Install perl library HTML Template
     """
-    url = "http://search.cpan.org/CPAN/authors/id/W/WO/WONKO/HTML-Template-2.94.tar.gz"
-    with lcd(env.tmp_dir):
-        dir_name = _fetch_and_unpack(env.tmp_dir, url)
-        with lcd(dir_name):
-            lrun("%s Makefile.PL"  % os.path.join(env.perl_dir,"bin","perl"))
-            lrun("make")
-            vlrun("make install")
-            
+    lrun("%s/bin/cpan -T -i LWP" % (env.perl_dir))    
+    lrun("%s/bin/cpan -T -i HTML::PullParser" % (env.perl_dir))
+    lrun("%s/bin/cpan -T -i HTML::Template" % (env.perl_dir))
+    lrun("%s/bin/cpan -T -i SOAP::Lite" % (env.perl_dir))
+    lrun("%s/bin/cpan -T -i XML::Simple" % (env.perl_dir))
+                
 def install_rsync():
     url = "ftp://ftp.samba.org/pub/rsync/rsync-3.1.0.tar.gz"
     _get_install(url, env, _configure_make)
@@ -557,7 +555,7 @@ def install_meme():
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
         with lcd(dir_name):
-           lrun("./configure --prefix=%(meme_dir)s --with-url='http://meme.nbcr.net/meme'" % env)
+           lrun("./configure --prefix=%(meme_dir)s --with-url='http://meme.nbcr.net/meme' --with-perl=%(bin_dir)s/bin/perl --with-python=%(bin_dir)s/python2.7" % env)
            lrun("make")
            lrun("make install")      
            
