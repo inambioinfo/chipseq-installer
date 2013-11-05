@@ -582,7 +582,7 @@ def install_meme():
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
         with lcd(dir_name):
-           lrun("./configure --prefix=%(meme_dir)s --with-url='http://meme.nbcr.net/meme' --with-perl=%(bin_dir)s/bin/perl --with-python=%(bin_dir)s/python2.7" % env)
+           lrun("./configure --prefix=%(meme_dir)s --with-url='http://meme.nbcr.net/meme' --with-perl=%(bin_dir)s/perl/bin/perl --with-python=%(bin_dir)s/python2.7" % env)
            lrun("make")
            lrun("make install")      
            
