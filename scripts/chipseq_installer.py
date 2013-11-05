@@ -177,11 +177,8 @@ def _fetch_and_unpack_genome(path, url):
         lrun("wget -r %s -O %s" % (url, tar_file))
         lrun("gzip -d -r  %s" % tar_file)
 
-def _configure_make(env, options=None):
-    if options:
-        lrun("./configure --disable-error --prefix=%s %s" % (env.project_dir, options))
-    else:
-        lrun("./configure --disable-error --prefix=%s" % (env.project_dir))
+def _configure_make(env, options=''):
+    lrun("./configure --disable-error --prefix=%s %s" % (env.project_dir, options))
     lrun("make")
     lrun("make install")
 
@@ -372,7 +369,6 @@ def install_r_libraries():
     """ % env
     lrun("echo '%s' >> %s" % (GMC_install2, out_file))       
 
-
     hmisc_install = """
     download.file(\"http://cran.r-project.org/src/contrib/Archive/Hmisc/Hmisc_3.10-1.1.tar.gz\",\"%(tmp_dir)s/Hmisc_3.10-1.1.tar.gz\")   
     """ % env
@@ -381,7 +377,6 @@ def install_r_libraries():
     install.packages(\"%(tmp_dir)s/Hmisc_3.10-1.1.tar.gz\",lib=\"%(r_lib_dir)s\")
     """ % env
     lrun("echo '%s' >> %s" % (hmisc_install2, out_file))       
-
 
     gdd_install = """
     download.file(\"http://www.rforge.net/src/contrib/GDD_0.1-13.tar.gz\",\"%(tmp_dir)s/GDD_0.1-13.tar.gz\")   
@@ -392,13 +387,9 @@ def install_r_libraries():
     """ % env
     lrun("echo '%s' >> %s" % (gdd_install2, out_file))       
 
-
     # Run the script and then get rid of it
     vlrun("%s %s" % (os.path.join(env.bin_dir, "Rscript"),out_file))
     #lrun("rm -f %s" % out_file)
-
-
-
 
 def install_perl():
     """Install perl
@@ -470,28 +461,33 @@ def install_tools():
     install_macs()
     install_meme()
     install_sicer()
-
+    
+def install_openssl():
+    """For UCSC tools that gives libssl.so.10 error while loading shared libraries
+    """
+    url = "http://www.openssl.org/source/openssl-1.0.1e.tar.gz"
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
+            lrun("./config --prefix=/home/pajon01/chipseq-test5/ --shared")
+            lrun("make")
+            lrun("make install")
+    with lcd(env.lib_dir):
+        lrun("ln -s ../lib64/libssl.so.1.0.0 libssl.so.10")
+        lrun("ln -s ../lib64/libcrypto.so.1.0.0 libcrypto.so.10")
+            
 def install_ucsc_tools():
     """Install useful executables from UCSC.
     see https://github.com/chapmanb/cloudbiolinux/blob/master/cloudbio/custom/bio_nextgen.py
     for an up-to-date version
     """
-    tools = ["liftOver", "faToTwoBit", "twoBitToFa", "bedToBigBed", "wigToBigWig"]
+    tools = ["liftOver", "faToTwoBit", "twoBitToFa", "bedToBigBed", "wigToBigWig", "bedGraphToBigWig"]
     url = "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/"
-    src_url = "ftp://hgdownload.cse.ucsc.edu/apache/htdocs/admin/exe/userApps.src.tgz"
     for tool in tools:
         with lcd(env.bin_dir):
             if not lexists(os.path.join(env.bin_dir, tool)):
                 lrun("wget %s%s" % (url, tool))
                 lrun("chmod a+rwx %s" % tool)
-    # special installation for bedGraphToBigWig due to error while loading shared libraries: libssl.so.10
-    url2 = "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64.v287/"
-    tool = "bedGraphToBigWig"
-    with lcd(env.bin_dir):
-        if not lexists(os.path.join(env.bin_dir, tool)):
-            lrun("wget %s%s" % (url, tool))
-            lrun("chmod a+rwx %s" % tool)
-            
 
 def install_samtools():
     """Install samtools 0.1.18
