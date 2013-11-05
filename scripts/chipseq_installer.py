@@ -257,7 +257,33 @@ def install_atlas():
     with lcd(env.lib_dir):
         # all shared lib needs to be moved from lib/atlas/lib to lib/atlas to be picked up by scipy installer
         lrun("mv atlas/lib/* atlas/.")
-            
+        
+def install_cairo():
+    """Needed when no X11 support available
+    """ 
+    # 1/ pixman
+    # wget http://www.cairographics.org/releases/pixman-0.24.4.tar.gz
+    # tar -zxvf pixman-0.24.4.tar.gz
+    # cd pixman-0.24.4
+    # ./configure --prefix=/home/pajon01/chipseq-test5/
+    # make
+    # make install
+    # 2/ xz
+    # wget http://tukaani.org/xz/xz-5.0.5.tar.gz
+    # tar -zxvf xz-5.0.5.tar.gz
+    # cd xz-5.0.5
+    # ./configure --prefix=/home/pajon01/chipseq-test5/
+    # make
+    # make install
+    # 3/ cairo
+    # wget http://www.cairographics.org/releases/cairo-1.12.16.tar.xz
+    # xz -dvk cairo-1.12.16.tar.xz
+    # tar -xvf cairo-1.12.16.tar
+    # cd cairo-1.12.16
+    # ./configure --prefix=/home/pajon01/chipseq-test5/lib/cairo --disable-static --disable-gobject
+    # make
+    # make install
+    pass
     
 def install_python_libraries():
     """Install Python libraries
