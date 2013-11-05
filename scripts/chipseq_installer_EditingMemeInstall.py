@@ -411,11 +411,12 @@ def install_perl_libraries():
     """
     lrun("export PERLLIB=%s/lib" % (env.perl_dir))
     lrun("export PERL5LIB=%s/lib" % (env.perl_dir))
-    lrun("%s/bin/cpan LWP" % (env.perl_dir))    
-    lrun("%s/bin/cpan HTML::PullParser" % (env.perl_dir))
-    lrun("%s/bin/cpan HTML::Template" % (env.perl_dir))
-    lrun("%s/bin/cpan SOAP::Lite" % (env.perl_dir))
-    lrun("%s/bin/cpan XML::Simple" % (env.perl_dir))
+    lrun("export PERL_MM_USE_DEFAULT=1")
+    lrun("%s/bin/cpan -T -i LWP" % (env.perl_dir))    
+    lrun("%s/bin/cpan -T -i  HTML::PullParser" % (env.perl_dir))
+    lrun("%s/bin/cpan -T -i  HTML::Template" % (env.perl_dir))
+    lrun("%s/bin/cpan -T -i  SOAP::Lite" % (env.perl_dir))
+    lrun("%s/bin/cpan -T -i  XML::Simple" % (env.perl_dir))
     
     
     #url = "http://search.cpan.org/CPAN/authors/id/W/WO/WONKO/HTML-Template-2.94.tar.gz"
