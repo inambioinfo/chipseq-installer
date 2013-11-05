@@ -230,7 +230,6 @@ def install_dependencies():
     install_r_libraries()
     install_perl()
     install_perl_libraries()
-    install_atlas()
     install_python_libraries()
     install_rsync()
     install_git()
@@ -238,21 +237,30 @@ def install_dependencies():
     install_workflow()
 
 def install_atlas():
-    # wget http://sourceforge.net/projects/math-atlas/files/Stable/3.10.1/atlas3.10.1.tar.bz2
-    # wget http://www.netlib.org/lapack/lapack-3.4.1.tgz
-    # tar -xvjf atlas3.10.1.tar.bz2
-    # mv ATLAS ATLAS3.10.1
-    # cd ATLAS3.10.1
-    # mkdir Linux_C2D64SSE3
-    # cd Linux_C2D64SSE3
-    # mkdir /home/pajon01/chipseq-test5/lib/atlas
-    # ../configure -b 64 -D c -DPentiumCPS=2400 --shared --prefix=/home/pajon01/chipseq-test5/lib/atlas --with-netlib-lapack-tarfile=/home/pajon01/chipseq-test5/tmp/lapack-3.4.1.tgz
-    # make build
-    # make check
-    # make ptcheck
-    # make install
-    # all shared lib needs to be moved from lib/atlas/lib to lib/atlas to be picked up by scipy installer
-    pass
+    """Atlas may need to be installed to have numpy anc scipy installed
+    """
+    lapack_url = "http://www.netlib.org/lapack/lapack-3.4.1.tgz"
+    lapack_tar = os.path.join(env.tmp_dir, 'lapack-3.4.1.tgz')
+    atlas_url = "http://sourceforge.net/projects/math-atlas/files/Stable/3.10.1/atlas3.10.1.tar.bz2"
+    atlas_dir = "ATLAS3.10.1"
+    atlas_lib = os.path.join(env.lib_dir, 'atlas')
+    _make_dir(atlas_lib)
+    with lcd(env.tmp_dir):
+        lrun("wget %s" % lapack_url)
+        dir_name = _fetch_and_unpack(atlas_url)
+        lrun("mv ATLAS %s" % atlas_dir)
+        with lcd(atlas_dir):
+            _make_dir("linux_install")
+            with lcd("linux_install"):
+                lrun("../configure -b 64 -D c -DPentiumCPS=2400 --shared --prefix=%s --with-netlib-lapack-tarfile=%s" % (atlas_lib, lapack_tar))
+                lrun("make build")
+                lrun("make check")
+                lrun("make ptcheck")
+                lrun("make install")
+    with lcd(env.lib_dir):
+        # all shared lib needs to be moved from lib/atlas/lib to lib/atlas to be picked up by scipy installer
+        lrun("mv atlas/lib/* atlas/.")
+            
     
 def install_python_libraries():
     """Install Python libraries
@@ -265,8 +273,7 @@ def install_python_libraries():
     vlrun("pip install pyyaml==3.10")
     vlrun("pip install rpy2==2.3.8")
     vlrun("pip install pysam==0.7.4")
-    # problem with ATLAS installation
-    #vlrun("pip install scipy==0.12.1")
+    vlrun("pip install scipy==0.12.1")
     vlrun("pip install bx-python==0.7.1")
     vlrun("pip install configparser")
     vlrun("pip install biopython==1.62")    
