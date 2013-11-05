@@ -223,10 +223,10 @@ def install_dependencies():
     - Java
     - Rich Bowers' workflow
     """
-    install_r()
-    install_r_libraries()
     install_perl()
     install_perl_libraries()
+    install_r()
+    install_r_libraries()
     install_python_libraries()
     install_rsync()
     install_git()
@@ -296,7 +296,7 @@ def install_python_libraries():
     vlrun("pip install pyyaml==3.10")
     vlrun("pip install rpy2==2.3.8")
     vlrun("pip install pysam==0.7.4")
-    vlrun("pip install scipy==0.12.1")
+    #vlrun("pip install scipy==0.12.1")
     vlrun("pip install bx-python==0.7.1")
     vlrun("pip install configparser")
     vlrun("pip install biopython==1.62")    
