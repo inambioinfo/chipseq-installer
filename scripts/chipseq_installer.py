@@ -226,7 +226,7 @@ def install_atlas():
     _make_dir(atlas_lib)
     with lcd(env.tmp_dir):
         lrun("wget %s" % lapack_url)
-        dir_name = _fetch_and_unpack(atlas_url)
+        dir_name = _fetch_and_unpack(env.tmp_dir, atlas_url)
         lrun("mv ATLAS %s" % atlas_dir)
         with lcd(atlas_dir):
             _make_dir("linux_install")
