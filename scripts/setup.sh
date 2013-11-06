@@ -37,10 +37,5 @@ echo "[1] Please, to activate python virtualenv, do"
 echo ">>> source bin/activate"
 echo
 echo "[2] Then, install chipseq pipeline:"
-echo "    This script requires that you can do a 'ssh localhost'"
-echo "    to your installation machine. If you'd like to do this "
-echo "    without any passwords you can setup your ssh keys with:"
-echo "    >>> cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
-echo
 echo ">>> fab -f chipseq-build/scripts/chipseq_installer.py local deploy > chipseq_installer.out 2>&1 &"
 echo

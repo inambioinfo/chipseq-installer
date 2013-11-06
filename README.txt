@@ -34,6 +34,11 @@ If you are getting an error while installing scipy with our installer, please
 try to install atlas using this command:
 >  fab -f chipseq-build/scripts/chipseq_installer.py local install_atlas
 
+- The installer script uses fabric and requires that you can do a 
+'ssh localhost' on your installation machine. 
+If you cannot you will have to setup your ssh keys like this:
+> cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
+
 --------------------------------------------------------------------------------
 -- 1. Before you have any of our codes on your computer...
 --------------------------------------------------------------------------------
