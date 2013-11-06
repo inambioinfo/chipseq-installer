@@ -57,7 +57,7 @@ Get installer code
 modify CHIPSEQ_ROOT=/home/pajon01/chipseq-test/ 
 to represent the root of your project so one level above this one where this README is.
 
-- edit scripts/setup.sh
+- edit chipseq-build/scripts/setup.sh
 modify PYTHON_PATH=/home/mib-cri/software/python2.7/bin
 to point to your own installation of python.
 
