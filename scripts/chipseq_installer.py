@@ -433,12 +433,12 @@ def install_perl():
 def install_perl_libraries():
     """Install perl library HTML Template
     """
-    lrun("%s/bin/cpan App::cpanminus" % (env.perl_dir))    
-    lrun("%s/bin/cpanm --skip-installed --notest HTML::PullParser" % (env.perl_dir))
-    lrun("%s/bin/cpanm --skip-installed --notest HTML::Template" % (env.perl_dir))
-    lrun("%s/bin/cpanm --skip-installed --notest LWP" % (env.perl_dir))
-    lrun("%s/bin/cpanm --skip-installed --notest SOAP::Lite" % (env.perl_dir))
-    lrun("%s/bin/cpanm --skip-installed --notest XML::Simple" % (env.perl_dir))    
+    lrun("%s/bin/cpan App::cpanminus < /dev/null" % (env.perl_dir))    
+    lrun("%s/bin/cpanm --skip-installed --notest HTML::PullParser < /dev/null" % (env.perl_dir))
+    lrun("%s/bin/cpanm --skip-installed --notest HTML::Template < /dev/null" % (env.perl_dir))
+    lrun("%s/bin/cpanm --skip-installed --notest LWP < /dev/null" % (env.perl_dir))
+    lrun("%s/bin/cpanm --skip-installed --notest SOAP::Lite < /dev/null" % (env.perl_dir))
+    lrun("%s/bin/cpanm --skip-installed --notest XML::Simple < /dev/null" % (env.perl_dir))    
                 
 def install_rsync():
     url = "ftp://ftp.samba.org/pub/rsync/rsync-3.1.0.tar.gz"
