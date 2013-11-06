@@ -62,7 +62,7 @@ env.use_sudo = False
 # == Host specific setup
 
 def local():
-    """Setup environment for local installation on lbio for running chipseq jobs on the cluster.
+    """Setup environment for local installation for running chipseq jobs on the cluster.
     """
     env.r_dir = env.project_dir
     env.env_setup = ('env.bashrc')
@@ -81,22 +81,38 @@ def deploy():
     install_chipseq()
     install_test()
 
-# ================================================================================
-# == Decorators and context managers
-
-def _if_not_installed(pname):
-    """Decorator that checks if a callable program is installed.
+def deploy_withextras():
+    """Setup environment, install dependencies and tools
+    and deploy chipseq pipeline with extras such as atlas and openssl
     """
-    def argcatcher(func):
-        def decorator(*args, **kwargs):
-            with settings(
-                hide('warnings', 'running', 'stdout', 'stderr'),
-                warn_only=True):
-                result = vlrun(pname)
-                if result.return_code == 127:
-                    return func(*args, **kwargs)
-        return decorator
-    return argcatcher
+    setup_environment()
+    install_atlas() # needed for installing SciPy library
+    install_dependencies()
+    install_openssl() # needed for ucsc tools
+    install_tools()
+    install_data()
+    install_chipseq()
+    install_test()
+
+# ================================================================================
+# == Decorators and build utilities
+
+def setup_environment():
+    """Copy adhoc environment variables and create tmp directory
+    """
+    lrun('cp %(chipseq_build_path)s/%(env_setup)s %(project_dir)s/%(env_setup)s' % env)
+    _make_dir(env.tmp_dir)
+
+def lexists(path):
+    return os.path.exists(path)
+
+def vlrun(command):
+    """Run a command in a virtual environment. This prefixes the run command with the source command.
+    Usage:
+        vlrun('pip install tables')
+    """
+    source = 'source %(project_dir)s/bin/activate && source %(project_dir)s/%(env_setup)s && ' % env
+    return lrun(source + command,shell='/bin/bash')    
 
 def _if_not_python_lib(library):
     """Decorator that checks if a python library is installed.
@@ -109,19 +125,6 @@ def _if_not_python_lib(library):
                 return func(*args, **kwargs)
         return decorator
     return argcatcher
-
-# -- Standard build utility simplifiers
-
-def lexists(path):
-    return os.path.exists(path)
-
-def vlrun(command):
-    """Run a command in a virtual environment. This prefixes the run command with the source command.
-    Usage:
-        vlrun('pip install tables')
-    """
-    source = 'source %(project_dir)s/bin/activate && source %(project_dir)s/%(env_setup)s && ' % env
-    return lrun(source + command,shell='/bin/bash')    
 
 def _make_dir(path):
     with settings(warn_only=True):
@@ -182,36 +185,14 @@ def _configure_make(env, options=''):
     lrun("make")
     lrun("make install")
 
-def _python_build(env, option=None):
-    vlrun("python setup.py install")
-
-def _get_install(url, env, make_command, make_options=None):
+def _get_install(url, env, make_command, make_options=''):
     """Retrieve source from a URL and install in our system directory.
     """
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
         with lcd(dir_name):
             make_command(env, make_options)
-
-def _make_copy(find_cmd=None, premake_cmd=None, do_make=True):
-    def _do_work(env,options=None):
-        if premake_cmd:
-            premake_cmd()
-        if do_make:
-            lrun("make")
-        if find_cmd:
-            install_dir = env.bin_dir
-            for fname in lrun(find_cmd).split("\n"):
-		print fname
-		lrun("cp -rf %s %s" % (fname.rstrip("\r"), install_dir))
-    return _do_work
     
-def setup_environment():
-    """Copy adhoc environment variables
-    """
-    lrun('cp %(chipseq_build_path)s/%(env_setup)s %(project_dir)s/%(env_setup)s' % env)
-    _make_dir(env.tmp_dir)
-
 # ================================================================================
 # == Required dependencies to install chipseq pipeline
 
@@ -225,6 +206,7 @@ def install_dependencies():
     """
     install_perl()
     install_perl_libraries()
+    install_cairo()
     install_r()
     install_r_libraries()
     install_python_libraries()
@@ -261,29 +243,21 @@ def install_atlas():
 def install_cairo():
     """Needed when no X11 support available
     """ 
-    # 1/ pixman
-    # wget http://www.cairographics.org/releases/pixman-0.24.4.tar.gz
-    # tar -zxvf pixman-0.24.4.tar.gz
-    # cd pixman-0.24.4
-    # ./configure --prefix=/home/pajon01/chipseq-test5/
-    # make
-    # make install
-    # 2/ xz
-    # wget http://tukaani.org/xz/xz-5.0.5.tar.gz
-    # tar -zxvf xz-5.0.5.tar.gz
-    # cd xz-5.0.5
-    # ./configure --prefix=/home/pajon01/chipseq-test5/
-    # make
-    # make install
-    # 3/ cairo
-    # wget http://www.cairographics.org/releases/cairo-1.12.16.tar.xz
-    # xz -dvk cairo-1.12.16.tar.xz
-    # tar -xvf cairo-1.12.16.tar
-    # cd cairo-1.12.16
-    # ./configure --prefix=/home/pajon01/chipseq-test5/lib/cairo --disable-static --disable-gobject
-    # make
-    # make install
-    pass
+    xz_url = "http://tukaani.org/xz/xz-5.0.5.tar.gz"
+    pixman_url = "http://www.cairographics.org/releases/pixman-0.30.2.tar.gz"
+    cairo_url = "http://www.cairographics.org/releases/cairo-1.12.16.tar.xz"
+    cairo_dir = "cairo-1.12.16"
+    with lcd(env.tmp_dir):
+        _get_install(xz_url, env, _configure_make)
+        _get_install(pixman_url, env, _configure_make)
+        lrun("wget %s" % cairo_url)
+        lrun("xz -dvk cairo-1.12.16.tar.xz")
+        lrun("tar -xvf cairo-1.12.16.tar")
+        with lcd(cairo_dir):
+            lrun("./configure --prefix=/home/pajon01/chipseq-test5/lib/cairo --disable-static --disable-gobject")
+            lrun("make")
+            lrun("make install")
+
     
 def install_python_libraries():
     """Install Python libraries
@@ -296,7 +270,7 @@ def install_python_libraries():
     vlrun("pip install pyyaml==3.10")
     vlrun("pip install rpy2==2.3.8")
     vlrun("pip install pysam==0.7.4")
-    #vlrun("pip install scipy==0.12.1")
+    vlrun("pip install scipy==0.12.1")
     vlrun("pip install bx-python==0.7.1")
     vlrun("pip install configparser")
     vlrun("pip install biopython==1.62")    

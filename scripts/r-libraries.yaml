@@ -35,6 +35,7 @@ cran:
  - caTools
  - gdata
  - optparse
+ - Cairo
 
 biocrepo: http://bioconductor.org/biocLite.R
 bioc:

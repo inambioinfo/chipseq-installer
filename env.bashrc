@@ -12,6 +12,9 @@ export PATH=${CHIPSEQ_ROOT}/bin:${PATH}
 # Python virtualenv
 source ${CHIPSEQ_ROOT}/bin/activate
 
+# Pkg config for Cairo
+export PKG_CONFIG_PATH=${CHIPSEQ_ROOT}/lib/pkgconfig/
+
 # R libraries
 export R_LIBS=${CHIPSEQ_ROOT}/lib/R/library
 
