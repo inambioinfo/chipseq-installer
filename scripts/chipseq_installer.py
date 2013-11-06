@@ -251,12 +251,12 @@ def install_cairo():
         _get_install(xz_url, env, _configure_make)
         _get_install(pixman_url, env, _configure_make)
         lrun("wget %s" % cairo_url)
-        lrun("xz -dvk cairo-1.12.16.tar.xz")
-        lrun("tar -xvf cairo-1.12.16.tar")
+        vlrun("xz -dvk cairo-1.12.16.tar.xz")
+        vlrun("tar -xvf cairo-1.12.16.tar")
         with lcd(cairo_dir):
-            lrun("./configure --prefix=/home/pajon01/chipseq-test5/lib/cairo --disable-static --disable-gobject")
-            lrun("make")
-            lrun("make install")
+            vlrun("./configure --prefix=/home/pajon01/chipseq-test5/lib/cairo --disable-static --disable-gobject")
+            vlrun("make")
+            vlrun("make install")
 
     
 def install_python_libraries():
