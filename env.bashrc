@@ -4,7 +4,8 @@
 umask 022 #(666-022)=644 (rw-r--r--) for files & (777-022)=755 (dwxr-xr-x) for directories
 
 # To be defined per project
-export CHIPSEQ_ROOT=EDITME
+# CHIPSEQ_ROOT should be defined as the directory above chipseq-build checkout.
+export CHIPSEQ_ROOT=/Path/To/Edit/
 
 # bin
 export PATH=${CHIPSEQ_ROOT}/bin:${PATH}
