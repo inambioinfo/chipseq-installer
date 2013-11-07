@@ -10,10 +10,8 @@ We are sorry but you will need to have these installed before we can start...
 - wget 
 - tar 
 - unzip 
-- svn 
 - make 
 - cp 
-- rsync
 - python2.7
 - boots http://www.boost.org/
 
