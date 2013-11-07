@@ -98,9 +98,9 @@ def deploy_withextras():
 # == Decorators and build utilities
 
 def setup_environment():
-    """Copy adhoc environment variables and create tmp directory
+    """Copy adhoc environment variables, set CHIPSEQ_ROOT path and create tmp directory
     """
-    lrun('cp %(chipseq_build_path)s/%(env_setup)s %(project_dir)s/%(env_setup)s' % env)
+    lrun("sed 's/\/Path\/To\/Edit\//%(project_dir)s/' %(chipseq_build_path)s/%(env_setup)s > %(project_dir)s/%(env_setup)s" % env)
     _make_dir(env.tmp_dir)
 
 def lexists(path):

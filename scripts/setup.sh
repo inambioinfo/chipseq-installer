@@ -1,20 +1,21 @@
 #!/bin/bash
 
 # variables
-PYTHON_PATH=/home/mib-cri/software/python2.7/bin
+PYTHON_EXE=/home/mib-cri/software/python2.7/bin
 PROJECT_ROOT=`pwd`
 VIRTUALENV_ACTIVATE=${PROJECT_ROOT}/bin/activate
 VIRTUALENV_VERSION=1.10.1
 
 echo "Checking core dependencies before installing..."
 
-for core_tool in wget tar unzip make cp python
+for core_tool in wget tar unzip make cp ${PYTHON_EXE}/python
 do
     command -v $core_tool >/dev/null 2>&1 || { echo >&2 "It requires $core_tool but it's not installed. Aborting."; exit 1; }
     echo "... $core_tool installed"
 done
 
 echo "Running chipseq setup script in $PROJECT_ROOT"
+
 cd ${PROJECT_ROOT}
 
 if [ ! -e ${VIRTUALENV_ACTIVATE} ]; then
@@ -24,7 +25,7 @@ if [ ! -e ${VIRTUALENV_ACTIVATE} ]; then
 	tar -zxvf virtualenv-${VIRTUALENV_VERSION}.tar.gz 
 	echo "${PROJECT_ROOT}/virtualenv.py downloaded"
     fi
-    ${PYTHON_PATH}/python virtualenv-${VIRTUALENV_VERSION}/virtualenv.py ${PROJECT_ROOT}
+    ${PYTHON_EXE}/python virtualenv-${VIRTUALENV_VERSION}/virtualenv.py ${PROJECT_ROOT}
     echo "Virtual environment generated"
 fi
 
@@ -32,10 +33,13 @@ source ${VIRTUALENV_ACTIVATE}
 pip install fabric
 pip install PyYAML
 
+echo "================================================================================"
 echo
 echo "[1] Please, to activate python virtualenv, do"
 echo ">>> source bin/activate"
 echo
 echo "[2] Then, install chipseq pipeline:"
 echo ">>> fab -f chipseq-build/scripts/chipseq_installer.py local deploy > chipseq_installer.out 2>&1 &"
+echo
+echo "================================================================================"
 echo

@@ -48,22 +48,18 @@ Get installer code
 > svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/chipseq-build
 
 --------------------------------------------------------------------------------
--- 2. Before you start...
+-- 2. Before you start... edit your python executable
 --------------------------------------------------------------------------------
-
-- edit chipseq-build/env.bashrc
-modify CHIPSEQ_ROOT=/home/pajon01/chipseq-test/ 
-to represent the root of your project so one level above this one where this README is.
 
 - edit chipseq-build/scripts/setup.sh
 modify PYTHON_PATH=/home/mib-cri/software/python2.7/bin
 to point to your own installation of python.
 
 --------------------------------------------------------------------------------
--- Then the real installation...
+-- Then start the real installation...
 --------------------------------------------------------------------------------
 
-- from $CHIPSEQ_ROOT, run
+- run
 > chipseq-build/scripts/setup.sh
 
 and follow the instructions
