@@ -247,6 +247,7 @@ def install_cairo():
     pixman_url = "http://www.cairographics.org/releases/pixman-0.30.2.tar.gz"
     cairo_url = "http://www.cairographics.org/releases/cairo-1.12.16.tar.xz"
     cairo_dir = "cairo-1.12.16"
+    cairo_lib = os.path.join(env.lib_dir, 'cairo')
     with lcd(env.tmp_dir):
         _get_install(xz_url, env, _configure_make)
         _get_install(pixman_url, env, _configure_make)
@@ -254,7 +255,7 @@ def install_cairo():
         vlrun("xz -dvk cairo-1.12.16.tar.xz")
         vlrun("tar -xvf cairo-1.12.16.tar")
         with lcd(cairo_dir):
-            vlrun("./configure --prefix=/home/pajon01/chipseq-test5/lib/cairo --disable-static --disable-gobject")
+            vlrun("./configure --prefix=%s --disable-static --disable-gobject" % cairo_lib)
             vlrun("make")
             vlrun("make install")
 
