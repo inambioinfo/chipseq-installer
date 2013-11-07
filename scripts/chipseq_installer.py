@@ -101,7 +101,9 @@ def setup_environment():
     """Copy adhoc environment variables, set CHIPSEQ_ROOT path and create tmp directory
     """
     sed_chipseq_root = env.project_dir.replace('/', '\/')
-    lrun("sed 's/\/Path\/To\/Edit\//%s/' %(chipseq_build_path)s/%(env_setup)s > %(project_dir)s/%(env_setup)s" % (sed_chipseq_root, env))
+    setup_ori = os.path.join(env.chipseq_build_path, env.env_setup)
+    setup_dest = os.path.join(env.project_dir, env.env_setup)
+    lrun("sed 's/\/Path\/To\/Edit\//%s/' %s > %s" % (sed_chipseq_root, setup_ori, setup_dest))
     _make_dir(env.tmp_dir)
 
 def lexists(path):
