@@ -224,8 +224,7 @@ def install_tar():
     """Get 2011 version which decompress xz archive
     """
     url = "http://ftp.gnu.org/gnu/tar/tar-1.26.tar.gz"
-    with lcd(env.tmp_dir):
-        _get_install(url, env, _configure_make)
+    _get_install(url, env, _configure_make)
 
 def install_atlas():
     """Atlas may need to be installed to have numpy anc scipy installed
@@ -257,9 +256,8 @@ def install_cairo():
     """ 
     pixman_url = "http://www.cairographics.org/releases/pixman-0.30.2.tar.gz"
     cairo_url = "http://www.cairographics.org/releases/cairo-1.12.16.tar.xz"
-    with lcd(env.tmp_dir):
-        _get_install(pixman_url, env, _configure_make)
-        _get_install(cairo_url, env, _configure_make, "--disable-static --disable-gobject")
+    _get_install(pixman_url, env, _configure_make)
+    _get_install(cairo_url, env, _configure_make, "--disable-static --disable-gobject")
     
 def install_python_libraries():
     """Install Python libraries
