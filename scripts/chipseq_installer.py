@@ -138,6 +138,7 @@ def _get_expected_file(path, url):
     tar_file = os.path.split(url)[-1]
     safe_tar = "--pax-option='delete=SCHILY.*,delete=LIBARCHIVE.*'"
     exts = {(".tar.gz", ".tgz") : "tar %s -xzpf" % safe_tar,
+            (".tar.xz",) : "tar %s -xJpf" % safe_tar,
             (".tar.bz2",): "tar %s -xjpf" % safe_tar,
             (".zip",) : "unzip -o"}
     for ext_choices, tar_cmd in exts.iteritems():
@@ -207,6 +208,7 @@ def install_dependencies():
     - Java
     - Rich Bowers' workflow
     """
+    install_tar()
     install_perl()
     install_perl_libraries()
     install_cairo()
@@ -217,6 +219,13 @@ def install_dependencies():
     install_git()
     install_java()
     install_workflow()
+    
+def install_tar():
+    """Get 2011 version which decompress xz archive
+    """
+    url = "http://ftp.gnu.org/gnu/tar/tar-1.26.tar.gz"
+    with lcd(env.tmp_dir):
+        _get_install(url, env, _configure_make)
 
 def install_atlas():
     """Atlas may need to be installed to have numpy anc scipy installed
@@ -246,22 +255,11 @@ def install_atlas():
 def install_cairo():
     """Needed when no X11 support available
     """ 
-    xz_url = "http://tukaani.org/xz/xz-5.0.5.tar.gz"
     pixman_url = "http://www.cairographics.org/releases/pixman-0.30.2.tar.gz"
     cairo_url = "http://www.cairographics.org/releases/cairo-1.12.16.tar.xz"
-    cairo_dir = "cairo-1.12.16"
-    cairo_lib = os.path.join(env.lib_dir, 'cairo')
     with lcd(env.tmp_dir):
-        _get_install(xz_url, env, _configure_make)
         _get_install(pixman_url, env, _configure_make)
-        lrun("wget %s" % cairo_url)
-        vlrun("xz -dvk cairo-1.12.16.tar.xz")
-        vlrun("tar -xvf cairo-1.12.16.tar")
-        with lcd(cairo_dir):
-            vlrun("./configure --prefix=%s --disable-static --disable-gobject" % cairo_lib)
-            vlrun("make")
-            vlrun("make install")
-
+        _get_install(cairo_url, env, _configure_make, "--disable-static --disable-gobject")
     
 def install_python_libraries():
     """Install Python libraries
@@ -392,7 +390,7 @@ def install_r_libraries():
     lrun("echo '%s' >> %s" % (gdd_install2, out_file))       
 
     # Run the script and then get rid of it
-    vlrun("%s %s" % (os.path.join(env.bin_dir, "Rscript"),out_file))
+    vlrun("%s %s" % (os.path.join(env.bin_dir, "Rscript"), out_file))
     #lrun("rm -f %s" % out_file)
 
 def install_perl():
