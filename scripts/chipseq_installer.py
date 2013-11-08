@@ -224,7 +224,9 @@ def install_dependencies():
 def install_tar():
     """Get 2011 version which decompress xz archive
     """
+    xz_url = "http://tukaani.org/xz/xz-5.0.5.tar.gz"
     url = "http://ftp.gnu.org/gnu/tar/tar-1.26.tar.gz"
+    _get_install(xz_url, env, _configure_make)
     _get_install(url, env, _configure_make)
 
 def install_atlas():
