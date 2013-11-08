@@ -1,0 +1,11 @@
+umask 022
+export CHIPSEQ_ROOT=/Path/To/Edit/
+export PATH=${CHIPSEQ_ROOT}/bin:${PATH}
+source ${CHIPSEQ_ROOT}/bin/activate
+export PKG_CONFIG_PATH=${CHIPSEQ_ROOT}/lib/pkgconfig/
+export R_LIBS=${CHIPSEQ_ROOT}/lib/R/library
+export PERLLIB=${CHIPSEQ_ROOT}/bin/perl/lib
+export PERL5LIB=${CHIPSEQ_ROOT}/bin/perl/lib
+export PERL_MM_USE_DEFAULT=1
+unset PYTHONPATH
+export LD_LIBRARY_PATH=${CHIPSEQ_ROOT}/lib/R/lib:${CHIPSEQ_ROOT}/lib:${LD_LIBRARY_PATH}
