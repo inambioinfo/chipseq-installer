@@ -65,7 +65,7 @@ def local():
     """Setup environment for local installation for running chipseq jobs on the cluster.
     """
     env.r_dir = env.project_dir
-    env.env_setup = ('env.bashrc')
+    env.env_setup = ('env.sh')
 
 # ================================================================================
 # == Fabric instructions
