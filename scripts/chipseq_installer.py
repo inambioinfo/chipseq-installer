@@ -468,7 +468,12 @@ def install_openssl():
     """For UCSC tools that gives libssl.so.10 error while loading shared libraries
     """
     url = "http://www.openssl.org/source/openssl-1.0.1e.tar.gz"
-    _get_install(url, env, _configure_make, "--shared")
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
+            lrun("./config --prefix=%s --shared" % env.project_dir)
+            lrun("make")
+            lrun("make install")
     with lcd(env.lib_dir):
         lrun("ln -s ../lib64/libssl.so.1.0.0 libssl.so.10")
         lrun("ln -s ../lib64/libcrypto.so.1.0.0 libcrypto.so.10")
