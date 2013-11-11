@@ -186,9 +186,9 @@ def _fetch_and_unpack_genome(path, url):
         lrun("gzip -d -r  %s" % tar_file)
 
 def _configure_make(env, options=''):
-    lrun("./configure --disable-error --prefix=%s %s" % (env.project_dir, options))
-    lrun("make")
-    lrun("make install")
+    vlrun("./configure --disable-error --prefix=%s %s" % (env.project_dir, options))
+    vlrun("make")
+    vlrun("make install")
 
 def _get_install(url, env, make_command, make_options=''):
     """Retrieve source from a URL and install in our system directory.
