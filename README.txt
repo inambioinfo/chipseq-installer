@@ -77,5 +77,5 @@ to follow the installation do
 -- Testing...
 --------------------------------------------------------------------------------
 > cd chipseq-test
-> ../Process10/RScripts/ChipSeq.r --genome mm9 --callMacsPeaks Yes --callMacsMotifs Yes
+> ../Process10/RScripts/ChipSeq.r --genome mm9 --callMacsPeaks Yes --callMacsMotifs Yes --callMacsPeakProfile Yes
 
