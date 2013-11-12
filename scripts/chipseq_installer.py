@@ -395,7 +395,7 @@ def install_r_libraries():
     """ % env
     lrun("echo '%s' >> %s" % (gridsvg_install, out_file))
     gridsvg_install2 = """
-    install.packages(\"%(tmp_dir)s/GDD_0.1-13.tar.gz\",lib=\"%(r_lib_dir)s\")
+    install.packages(\"%(tmp_dir)s/gridSVG_0.9-1.tar.gz\",lib=\"%(r_lib_dir)s\")
     """ % env
     lrun("echo '%s' >> %s" % (gridsvg_install2, out_file))       
 
