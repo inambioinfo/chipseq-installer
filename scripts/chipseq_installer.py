@@ -468,7 +468,7 @@ def install_tools():
 
 
 def install_bed2GTF():
-    url = "http://code.google.com/p/ea-utils/source/browse/trunk/clipper/gtf2bed"
+    url = "https://ea-utils.googlecode.com/svn/trunk/clipper/gtf2bed"
     with lcd(env.bin_dir):
     	lrun("wget %s -O gtf2bed.pl" % (url))         
     
