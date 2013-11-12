@@ -463,6 +463,14 @@ def install_tools():
     install_macs()
     install_meme()
     install_sicer()
+    install_bed2GTF()
+
+
+
+def install_bed2GTF():
+    url = "http://code.google.com/p/ea-utils/source/browse/trunk/clipper/gtf2bed"
+        with lcd(env.bin_dir):
+        	lrun("wget %s -O gtf2bed.pl" % (url))         
     
 def install_openssl():
     """For UCSC tools that gives libssl.so.10 error while loading shared libraries
@@ -611,6 +619,7 @@ def update_config():
         config.set("Executables", "java", os.path.join(env.lib_dir, "jdk1.7.0/bin/java"))
         config.set("Executables", "rexec", os.path.join(env.bin_dir, "Rscript"))
         config.set("Executables", "bigwig", os.path.join(env.bin_dir, "bedGraphToBigWig"))
+        config.set("Executables", "gtf2bed", os.path.join(env.bin_dir, "gtf2bed.pl"))
         config.set("Executables", "macs", os.path.join(env.bin_dir, "macs14"))
         config.set("Executables", "ame", os.path.join(env.bin_dir, "ame"))
         config.set("Executables", "sicer", os.path.join(env.bin_dir, "sicer"))
