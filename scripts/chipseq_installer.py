@@ -469,8 +469,8 @@ def install_tools():
 
 def install_bed2GTF():
     url = "http://code.google.com/p/ea-utils/source/browse/trunk/clipper/gtf2bed"
-        with lcd(env.bin_dir):
-        	lrun("wget %s -O gtf2bed.pl" % (url))         
+    with lcd(env.bin_dir):
+    	lrun("wget %s -O gtf2bed.pl" % (url))         
     
 def install_openssl():
     """For UCSC tools that gives libssl.so.10 error while loading shared libraries
