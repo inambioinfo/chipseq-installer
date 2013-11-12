@@ -389,10 +389,20 @@ def install_r_libraries():
     install.packages(\"%(tmp_dir)s/GDD_0.1-13.tar.gz\",lib=\"%(r_lib_dir)s\")
     """ % env
     lrun("echo '%s' >> %s" % (gdd_install2, out_file))       
+       
+    gridsvg_install = """
+    download.file(\"http://cran.r-project.org/src/contrib/Archive/gridSVG/gridSVG_0.9-1.tar.gz\",\"%(tmp_dir)s/GDD_0.1-13.tar.gz\")   
+    """ % env
+    lrun("echo '%s' >> %s" % (gridsvg_install, out_file))
+    gridsvg_install2 = """
+    install.packages(\"%(tmp_dir)s/GDD_0.1-13.tar.gz\",lib=\"%(r_lib_dir)s\")
+    """ % env
+    lrun("echo '%s' >> %s" % (gridsvg_install2, out_file))       
 
     # Run the script and then get rid of it
     vlrun("%s %s" % (os.path.join(env.bin_dir, "Rscript"), out_file))
     #lrun("rm -f %s" % out_file)
+    
 
 def install_perl():
     """Install perl
