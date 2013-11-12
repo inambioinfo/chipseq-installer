@@ -391,7 +391,7 @@ def install_r_libraries():
     lrun("echo '%s' >> %s" % (gdd_install2, out_file))       
        
     gridsvg_install = """
-    download.file(\"http://cran.r-project.org/src/contrib/Archive/gridSVG/gridSVG_0.9-1.tar.gz\",\"%(tmp_dir)s/GDD_0.1-13.tar.gz\")   
+    download.file(\"http://cran.r-project.org/src/contrib/Archive/gridSVG/gridSVG_0.9-1.tar.gz\",\"%(tmp_dir)s/gridSVG_0.9-1.tar.gz\")   
     """ % env
     lrun("echo '%s' >> %s" % (gridsvg_install, out_file))
     gridsvg_install2 = """
