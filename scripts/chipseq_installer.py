@@ -619,7 +619,7 @@ def update_config():
         config.set("Executables", "java", os.path.join(env.lib_dir, "jdk1.7.0/bin/java"))
         config.set("Executables", "rexec", os.path.join(env.bin_dir, "Rscript"))
         config.set("Executables", "bigwig", os.path.join(env.bin_dir, "bedGraphToBigWig"))
-        config.set("Executables", "gtf2bed", os.path.join(env.bin_dir, "gtf2bed.pl"))
+        config.set("Executables", "gtftobed", os.path.join(env.bin_dir, "gtf2bed.pl"))
         config.set("Executables", "macs", os.path.join(env.bin_dir, "macs14"))
         config.set("Executables", "ame", os.path.join(env.bin_dir, "ame"))
         config.set("Executables", "sicer", os.path.join(env.bin_dir, "sicer"))
