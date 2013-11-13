@@ -87,8 +87,8 @@ def deploy_withextras():
     """
     setup_environment()
     install_atlas() # needed for installing SciPy library
+    install_openssl() # needed for ucsc tools and perl
     install_dependencies()
-    install_openssl() # needed for ucsc tools
     install_tools()
     install_data()
     install_chipseq()
@@ -203,11 +203,15 @@ def _get_install(url, env, make_command, make_options=''):
 
 def install_dependencies():
     """Install chipseq dependencies:
-    - R & libraries
+    - tar
     - Perl & libraries
-    - Python libraries: NumPy, Cython, NumExpr, PyTables, RPy, RPy2, bx-python
+    - Cairo
+    - R & libraries
+    - Python libraries
+    - rsync
+    - git
     - Java
-    - Rich Bowers' workflow
+    - Richard Bowers' workflow
     """
     install_tar()
     install_perl()
@@ -222,15 +226,17 @@ def install_dependencies():
     install_workflow()
     
 def install_tar():
-    """Get 2011 version which decompress xz archive
+    """Install tar 1.27 with xz 5.0.5
+    to uncompress xz archive
     """
     xz_url = "http://tukaani.org/xz/xz-5.0.5.tar.gz"
-    url = "http://ftp.gnu.org/gnu/tar/tar-1.26.tar.gz"
+    url = "http://ftp.gnu.org/gnu/tar/tar-1.27.tar.gz"
     _get_install(xz_url, env, _configure_make)
     _get_install(url, env, _configure_make)
 
 def install_atlas():
-    """Atlas may need to be installed to have numpy anc scipy installed
+    """Install atlas 3.10.1
+    Atlas may need to be installed to have numpy anc scipy installed
     """
     lapack_url = "http://www.netlib.org/lapack/lapack-3.4.1.tgz"
     lapack_tar = os.path.join(env.tmp_dir, 'lapack-3.4.1.tgz')
@@ -255,7 +261,8 @@ def install_atlas():
         lrun("mv atlas/lib/* atlas/.")
         
 def install_cairo():
-    """Needed when no X11 support available
+    """Install cairo 1.12.16
+    Needed when no X11 support available
     """ 
     pixman_url = "http://www.cairographics.org/releases/pixman-0.30.2.tar.gz"
     cairo_url = "http://www.cairographics.org/releases/cairo-1.12.16.tar.xz"
@@ -292,7 +299,7 @@ def _install_rpy_lib():
             vlrun("python setup.py install")
 
 def install_r():
-    """Install R 2.15.2
+    """Install R 2.15.0
     """
     _make_dir(env.r_lib_dir)
     url = "http://cran.r-project.org/src/base/R-2/R-2.15.0.tar.gz"
@@ -305,8 +312,7 @@ def install_r():
             lrun('ln -fs %(r_dir)s/bin/Rscript %(bin_dir)s/Rscript' % env)
 
 def install_r_libraries():
-    """Install R libraries listed in r-libraries.yaml needed to run CRI tools
-    plus GenometriCorr & RMySQL_0.9-3
+    """Install R libraries listed in r-libraries.yaml needed to run chipseq pipeline
     """
     # Load list of R libraries to install
     config_file = open(os.path.join(env.chipseq_build_path, "scripts/r-libraries.yaml"), 'r')
@@ -401,11 +407,10 @@ def install_r_libraries():
 
     # Run the script and then get rid of it
     vlrun("%s %s" % (os.path.join(env.bin_dir, "Rscript"), out_file))
-    #lrun("rm -f %s" % out_file)
-    
+    lrun("rm -f %s" % out_file)
 
 def install_perl():
-    """Install perl
+    """Install perl 5.18.0
     """
     url = "http://www.cpan.org/src/5.0/perl-5.18.0.tar.gz"
     with lcd(env.tmp_dir):
@@ -418,7 +423,7 @@ def install_perl():
             lrun("make install")
 
 def install_perl_libraries():
-    """Install perl library HTML Template
+    """Install perl libraries
     """
     lrun("%s/bin/cpan App::cpanminus < /dev/null" % (env.perl_dir))    
     lrun("%s/bin/cpanm --skip-installed --notest HTML::PullParser < /dev/null" % (env.perl_dir))
@@ -428,10 +433,14 @@ def install_perl_libraries():
     lrun("%s/bin/cpanm --skip-installed --notest XML::Simple < /dev/null" % (env.perl_dir))    
                 
 def install_rsync():
+    """Install rsync 3.1.0
+    """
     url = "ftp://ftp.samba.org/pub/rsync/rsync-3.1.0.tar.gz"
     _get_install(url, env, _configure_make)
     
 def install_git():
+    """Install git 1.8.4.2
+    """
     url = "http://git-core.googlecode.com/files/git-1.8.4.2.tar.gz"
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
@@ -440,13 +449,16 @@ def install_git():
             lrun("make prefix=%s install" % env.project_dir)
 
 def install_java():
+    """Install Java 7
+    """
     tar_file = "jdk-7-linux-x64.tar.gz"
     with lcd(env.tmp_dir):
         lrun('wget --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%%3A%%2F%%2Fwww.oracle.com" http://download.oracle.com/otn-pub/java/jdk/7/%s -O %s' % (tar_file, tar_file))
         lrun ("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
 
 def install_workflow():
-    """Checkout the workflow manager from repository.
+    """Install Richard Bower CRUK-CI workflow manager
+    Checkout the workflow manager from repository.
     """
     with lcd(env.lib_dir):
          lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/workflow-manager/ workflow-manager')
@@ -473,17 +485,18 @@ def install_tools():
     install_macs()
     install_meme()
     install_sicer()
-    install_bed2GTF()
+    install_gtf2bed()
 
-
-
-def install_bed2GTF():
+def install_gtf2bed():
+    """Install gtf2bed from trunk
+    """
     url = "https://ea-utils.googlecode.com/svn/trunk/clipper/gtf2bed"
     with lcd(env.bin_dir):
     	lrun("wget %s -O gtf2bed.pl" % (url))         
     
 def install_openssl():
-    """For UCSC tools that gives libssl.so.10 error while loading shared libraries
+    """Install openssl 1.0.1e
+    For UCSC tools that gives libssl.so.10 error while loading shared libraries
     """
     url = "http://www.openssl.org/source/openssl-1.0.1e.tar.gz"
     with lcd(env.tmp_dir):
@@ -533,6 +546,8 @@ def install_bedtools():
             lrun("find bin/. -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
 def install_picard():
+    """Install Picard 1.96
+    """
     version = "1.96"
     url = 'http://downloads.sourceforge.net/project/picard/picard-tools/%s/picard-tools-%s.zip' % (version, version)
     picard_dir = os.path.join(env.bin_dir, "picard")
@@ -543,7 +558,8 @@ def install_picard():
             lrun("mv *.jar %s" % picard_dir)
 
 def install_bwa():
-    """BWA:  aligns short nucleotide sequences against a long reference sequence.
+    """Install BWA 0.5.9
+    Aligns short nucleotide sequences against a long reference sequence.
     http://bio-bwa.sourceforge.net/
     """
     version = "0.5.9"
@@ -560,7 +576,8 @@ def install_bwa():
             lrun("find . -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
 def install_macs():
-    """Model-based Analysis for ChIP-Seq.
+    """Install MACS 1.4.2
+    Model-based Analysis for ChIP-Seq.
     http://liulab.dfci.harvard.edu/MACS/
     """
     version = "1.4.2"
@@ -573,6 +590,8 @@ def install_macs():
             lrun("find bin/. -perm /u=x -type f -exec cp {} %(bin_dir)s \;" % env)
 
 def install_meme():
+    """Install meme 4.9.1
+    """
     url = "http://ebi.edu.au/ftp/software/MEME/4.9.1/meme_4.9.1.tar.gz"
     with lcd(env.tmp_dir):
         dir_name = _fetch_and_unpack(env.tmp_dir, url)
@@ -582,11 +601,13 @@ def install_meme():
            lrun("make install")      
            
 def install_sicer():
-   url = "http://home.gwu.edu/~wpeng/SICER_V1.1.tgz"
-   with lcd(env.tmp_dir):
-      dir_name = _fetch_and_unpack(env.tmp_dir, url)
-      with lcd(dir_name):
-          lrun("mv SICER %(sicer_dir)s" % env)          
+    """Install SICER 1.1
+    """
+    url = "http://home.gwu.edu/~wpeng/SICER_V1.1.tgz"
+    with lcd(env.tmp_dir):
+        dir_name = _fetch_and_unpack(env.tmp_dir, url)
+        with lcd(dir_name):
+            lrun("mv SICER %(sicer_dir)s" % env)          
 
 # ================================================================================
 # == Install chipseq pipeline and update config file
@@ -596,7 +617,7 @@ def install_chipseq():
     update_config()
           
 def install_chipseq_pipeline():
-    """Checkout the latest chipseq code from public svn repository and update.
+    """Checkout the latest chipseq code from public repository and update.
     """
     update = True
     if env.chipseq_path is not None:
