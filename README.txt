@@ -45,7 +45,9 @@ Create a project directory e.g. chipseq-test
 > mkdir chipseq-test
 
 Get installer code
-> svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/chipseq-build
+> wget https://github.com/pajanne/chipseq-installer/archive/master.zip --no-check-certificate
+> unzip master.zip 
+> cd chipseq-installer-master/
 
 --------------------------------------------------------------------------------
 -- 2. Before you start... edit your python executable
@@ -60,7 +62,7 @@ to point to your own installation of python.
 --------------------------------------------------------------------------------
 
 - run
-> chipseq-build/scripts/setup.sh
+> chipseq-installer-master/scripts/setup.sh
 
 and follow the instructions
 
@@ -68,7 +70,7 @@ and follow the instructions
 > source bin/activate
 
 - then, install chipseq pipeline:
-> fab -f chipseq-build/scripts/chipseq_installer.py local deploy > chipseq_installer.out 2>&1 &
+> fab -f chipseq-installer-master/scripts/chipseq_installer.py local deploy > chipseq_installer.out 2>&1 &
 
 to follow the installation do
 > tail -f chipseq_installer.out

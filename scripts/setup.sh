@@ -39,7 +39,7 @@ echo "[1] Please, to activate python virtualenv, do"
 echo ">>> source bin/activate"
 echo
 echo "[2] Then, install chipseq pipeline:"
-echo ">>> fab -f chipseq-build/scripts/chipseq_installer.py local deploy > chipseq_installer.out 2>&1 &"
+echo ">>> fab -f chipseq-installer-master/scripts/chipseq_installer.py local deploy > chipseq_installer.out 2>&1 &"
 echo
 echo "================================================================================"
 echo
