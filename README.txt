@@ -43,6 +43,7 @@ If you cannot you will have to setup your ssh keys like this:
 
 Create a project directory e.g. chipseq-test
 > mkdir chipseq-test
+> cd chipseq-test
 
 Get installer code
 > wget --no-check-certificate -r https://github.com/pajanne/chipseq-installer/archive/master.zip -O master.zip
