@@ -23,7 +23,7 @@ If you are getting an error when running these tools that gives libssl.so.10
 error while loading shared libraries. You should try installing openssl using 
 our installer:
 
-``` fab -f chipseq-build/scripts/chipseq_installer.py local install_openssl
+> fab -f chipseq-build/scripts/chipseq_installer.py local install_openssl
 
 - SciPy Python library
 If you are getting an error while installing scipy with our installer, please
