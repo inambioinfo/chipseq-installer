@@ -53,7 +53,7 @@ env.perl_dir = os.path.join(env.bin_dir, 'perl')
 env.meme_dir = os.path.join(env.bin_dir, 'meme')
 env.sicer_dir = os.path.join(env.bin_dir, 'sicer')
 env.java_dir = os.path.join(env.lib_dir, 'jdk1.7.0')
-env.chipseq_build_path = os.path.join(env.project_dir, 'chipseq-build')
+env.chipseq_installer = os.path.join(env.project_dir, 'chipseq-installer-master')
 env.chipseq_path = os.path.join(env.project_dir, 'Process10')
 env.chipseq_config_path = os.path.join(env.chipseq_path, 'Config')
 env.use_sudo = False
@@ -101,7 +101,7 @@ def setup_environment():
     """Copy adhoc environment variables, set CHIPSEQ_ROOT path and create tmp directory
     """
     sed_chipseq_root = env.project_dir.replace('/', '\/')
-    setup_ori = os.path.join(env.chipseq_build_path, env.env_setup)
+    setup_ori = os.path.join(env.chipseq_installer, env.env_setup)
     setup_dest = os.path.join(env.project_dir, env.env_setup)
     lrun("sed 's/\/Path\/To\/Edit\//%s/' %s > %s" % (sed_chipseq_root, setup_ori, setup_dest))
     _make_dir(env.tmp_dir)
@@ -315,7 +315,7 @@ def install_r_libraries():
     """Install R libraries listed in r-libraries.yaml needed to run chipseq pipeline
     """
     # Load list of R libraries to install
-    config_file = open(os.path.join(env.chipseq_build_path, "scripts/r-libraries.yaml"), 'r')
+    config_file = open(os.path.join(env.chipseq_installer, "scripts/r-libraries.yaml"), 'r')
     config = yaml.load(config_file)
     # Create an Rscript file with install details.
     out_file = "install_packages.R"
@@ -461,7 +461,8 @@ def install_workflow():
     Checkout the workflow manager from repository.
     """
     with lcd(env.lib_dir):
-         lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/workflow-manager/ workflow-manager')
+        workflow_path = os.path.join(env.chipseq_installer, "workflow-manager")
+        lrun('cp %s .' % workflow_path)
 
 # ================================================================================
 # == Required specific tools to install chipseq pipeline
