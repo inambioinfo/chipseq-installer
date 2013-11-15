@@ -1,8 +1,7 @@
 Installer for the ChipSeq Pipeline
 ==================================
 
---------------------------------------------------------------------------------
--- Dependencies
+Dependencies
 --------------------------------------------------------------------------------
 
 We are sorry but you will need to have these installed before we can start...
@@ -14,10 +13,9 @@ We are sorry but you will need to have these installed before we can start...
 - python2.7
 - boots http://www.boost.org/
 
-Write about striping
+TODO: Write about striping
 
---------------------------------------------------------------------------------
--- Warnings
+Warnings
 --------------------------------------------------------------------------------
 
 - UCSC Tools
@@ -36,8 +34,7 @@ try to install atlas using this command:
 If you cannot you will have to setup your ssh keys like this:
 > cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
 
---------------------------------------------------------------------------------
--- 1. Before you have any of our codes on your computer...
+1. Before you have any of our codes on your computer...
 --------------------------------------------------------------------------------
 
 Create a project directory e.g. chipseq-test
@@ -48,16 +45,14 @@ Get installer code
 > wget --no-check-certificate -r https://github.com/pajanne/chipseq-installer/archive/master.zip -O master.zip
 > unzip master.zip 
 
---------------------------------------------------------------------------------
--- 2. Before you start... edit your python executable
+2. Before you start... edit your python executable
 --------------------------------------------------------------------------------
 
 - edit chipseq-build/scripts/setup.sh
 modify PYTHON_PATH=/home/mib-cri/software/python2.7/bin
 to point to your own installation of python.
 
---------------------------------------------------------------------------------
--- Then start the real installation...
+Then start the real installation...
 --------------------------------------------------------------------------------
 
 - run
@@ -74,8 +69,7 @@ and follow the instructions
 to follow the installation do
 > tail -f chipseq_installer.out
 
---------------------------------------------------------------------------------
--- Testing...
+Testing...
 --------------------------------------------------------------------------------
 To run on an LSF machine..you are good to go!!
 If you wish to run on a non-LSF machine then please edit Prcess10/Config/config.ini and change "Mode = LSF" -> "Mode = local"
