@@ -45,7 +45,7 @@ Create a project directory e.g. chipseq-test
 > mkdir chipseq-test
 
 Get installer code
-> wget https://github.com/pajanne/chipseq-installer/archive/master.zip --no-check-certificate
+> wget --no-check-certificate -r https://github.com/pajanne/chipseq-installer/archive/master.zip -O master.zip
 > unzip master.zip 
 > cd chipseq-installer-master/
 
