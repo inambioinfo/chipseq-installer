@@ -34,7 +34,7 @@ try to install atlas using this command:
 If you cannot you will have to setup your ssh keys like this:
 > cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
 
-1. Before you have any of our codes on your computer...
+Before you have any of our codes on your computer...
 --------------------------------------------------------------------------------
 
 Create a project directory e.g. chipseq-test
@@ -45,7 +45,7 @@ Get installer code
 > wget --no-check-certificate -r https://github.com/pajanne/chipseq-installer/archive/master.zip -O master.zip
 > unzip master.zip 
 
-2. Before you start... edit your python executable
+Before you start... edit your python executable
 --------------------------------------------------------------------------------
 
 - edit chipseq-build/scripts/setup.sh
