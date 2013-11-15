@@ -462,7 +462,7 @@ def install_workflow():
     """
     with lcd(env.lib_dir):
         workflow_path = os.path.join(env.chipseq_installer, "workflow-manager")
-        lrun('cp %s .' % workflow_path)
+        lrun('cp -r %s .' % workflow_path)
 
 # ================================================================================
 # == Required specific tools to install chipseq pipeline
