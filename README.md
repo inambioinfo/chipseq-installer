@@ -39,6 +39,7 @@ Before you have any of our codes on your computer...
 
 Create a project directory e.g. chipseq-test
 > mkdir chipseq-test
+
 > cd chipseq-test
 
 Get installer code
