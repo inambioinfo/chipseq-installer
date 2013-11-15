@@ -13,7 +13,7 @@ We are sorry but you will need to have these installed before we can start...
 - python2.7
 - boots http://www.boost.org/
 
-TODO: Write about striping
+Write about striping...
 
 Warnings
 --------------------------------------------------------------------------------
@@ -22,16 +22,19 @@ Warnings
 If you are getting an error when running these tools that gives libssl.so.10 
 error while loading shared libraries. You should try installing openssl using 
 our installer:
+
 > fab -f chipseq-build/scripts/chipseq_installer.py local install_openssl
 
 - SciPy Python library
 If you are getting an error while installing scipy with our installer, please
 try to install atlas using this command:
+
 >  fab -f chipseq-build/scripts/chipseq_installer.py local install_atlas
 
 - The installer script uses fabric and requires that you can do a 
 'ssh localhost' on your installation machine. 
 If you cannot you will have to setup your ssh keys like this:
+
 > cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
 
 Before you have any of our codes on your computer...
@@ -57,17 +60,21 @@ Then start the real installation...
 --------------------------------------------------------------------------------
 
 - run
+
 > chipseq-installer-master/scripts/setup.sh
 
 and follow the instructions
 
 - activate python virtualenv, do
+
 > source bin/activate
 
 - then, install chipseq pipeline:
+
 > fab -f chipseq-installer-master/scripts/chipseq_installer.py local deploy > chipseq_installer.out 2>&1 &
 
 to follow the installation do
+
 > tail -f chipseq_installer.out
 
 Testing...
@@ -76,6 +83,7 @@ To run on an LSF machine..you are good to go!!
 If you wish to run on a non-LSF machine then please edit Prcess10/Config/config.ini and change "Mode = LSF" -> "Mode = local"
 
 > cd chipseq-test
+
 > ../Process10/RScripts/ChipSeq.r --genome mm9 --callMacsPeaks Yes --callMacsMotifs Yes --callMacsPeakProfile Yes
 
 
