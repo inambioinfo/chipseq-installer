@@ -733,7 +733,7 @@ def configure_meme():
 
 def install_test():
     with lcd(env.project_dir):
-        lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/trunk/chipseq-test/ chipseq-test')
+        lrun('mv %s .' % os.path.join(env.chipseq_installer, 'chipseq-test'))
 
 def fetch_testdata():
 	_make_dir(env.testfq_dir)
