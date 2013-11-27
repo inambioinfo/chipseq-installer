@@ -1,0 +1,4 @@
+GenomicsID,SampleName,Analysis_State,Run,Lane,BamLocation,FQLocation,BarcodesFile,Tissue,Factor,Antibody,Condition_1,Condition_2,Replicate,InputToUse,toMerge,Source_File,Processed_bamFileName,Original,delRand,Excluded,Filtered,Unique,DuplicationRate,InputFileNameToUse,derivedFrom,Macs_Fragment_Length,Sissr_Fragment_Length,Correlation_Fragment_Length,Coverage_Fragment_Length,
+Ikaros_rep1_1,Ikaros_rep1,RunMe,NA,NA,NA,ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619469/SRR619469.fastq.gz,NA,B3,Ikzf1,Ikzf1,NA,NA,NA,InputRep1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+Ikaros_rep1_2,Ikaros_rep1,RunMe,NA,NA,NA,ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619470/SRR619470.fastq.gz,NA,B3,Ikzf1,Ikzf1,NA,NA,NA,InputRep1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+InputRep1_1,InputRep1,RunMe,NA,NA,NA,ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR619/SRR619473/SRR619473.fastq.gz,NA,B3,Input,Input,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
