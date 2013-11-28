@@ -3,28 +3,15 @@ Created by Anne Pajon on 11 Apr 2013
 
 Copyright (c) 2012 Cancer Research UK - Cambridge Institute.
 
-This source file  is licensed under the Academic  Free License version
-3.0 available at http://www.opensource.org/licenses/AFL-3.0.
+This source file is licensed under The MIT License (MIT).
 
-Permission is  hereby granted  to reproduce, translate,  adapt, alter,
-transform, modify, or arrange  this source file (the 'Original Work');
-to distribute  or communicate copies of  it under any  license of your
-choice that does  not contradict the terms and  conditions; to perform
-or display the Original Work publicly.
-
-THE ORIGINAL WORK  IS PROVIDED UNDER THIS LICENSE ON  AN 'AS IS' BASIS
-AND WITHOUT  WARRANTY, EITHER  EXPRESS OR IMPLIED,  INCLUDING, WITHOUT
-LIMITATION,  THE WARRANTIES  OF  NON-INFRINGEMENT, MERCHANTABILITY  OR
-FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY OF
-THE ORIGINAL WORK IS WITH YOU.
-
-Ideas taken from:
+And many ideas have been taken from:
 - https://github.com/chapmanb/bcbb/blob/master/galaxy/galaxy_fabfile.py
 - https://github.com/chapmanb/cloudbiolinux
 
-Fabric  deployment file  to set  up a  local Galaxy  instance.  Fabric
-(http://docs.fabfile.org) is used to manage the automation of a remote
-server.
+It is a fabric deployment file to set up the chipseq pipeline developed by 
+Thomas Carroll. Fabric (http://docs.fabfile.org) is used to manage the automation 
+of the installation.
 
 Usage:
     fab -f scripts/chipseq_installer.py local deploy > chipseq_installer.out

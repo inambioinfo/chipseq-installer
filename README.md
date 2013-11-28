@@ -13,6 +13,14 @@ We are sorry but you will need to have these installed before we can start...
 - python2.7
 - boots http://www.boost.org/
 
+And you should be running bash.
+
+>  echo $SHELL
+
+should return
+
+> /bin/bash
+
 Write about striping...
 
 Warnings
