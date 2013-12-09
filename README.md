@@ -46,9 +46,9 @@ Create a project directory e.g. chipseq-test
 > cd chipseq-test
 
 Get installer code
-> wget --no-check-certificate -r https://github.com/pajanne/chipseq-installer/archive/master.zip -O master.zip
+> wget --no-check-certificate -r https://github.com/crukci-bioinformatics/chipseq-installer/archive/master.zip -O master-installer.zip
 
-> unzip master.zip 
+> unzip master-installer.zip 
 
 Before you start... edit your python executable
 --------------------------------------------------------------------------------
