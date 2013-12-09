@@ -85,10 +85,10 @@ to follow the installation do
 Testing...
 --------------------------------------------------------------------------------
 To run on an LSF machine..you are good to go!!
-If you wish to run on a non-LSF machine then please edit Process10/Config/config.ini and change "Mode = LSF" -> "Mode = local"
+If you wish to run on a non-LSF machine then please edit chipseq-pipeline-master/Process10/Config/config.ini and change "Mode = LSF" -> "Mode = local"
 
 > cd chipseq-test
 
-> ../Process10/RScripts/ChipSeq.r --genome mm9 --callMacsPeaks Yes --callMacsMotifs Yes --callMacsPeakProfile Yes
+> chipseq-pipeline-master/Process10/RScripts/ChipSeq.r --genome mm9 --callMacsPeaks Yes --callMacsMotifs Yes --callMacsPeakProfile Yes
 
 
