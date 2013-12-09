@@ -69,11 +69,13 @@ and follow the instructions
 - activate python virtualenv, do
 
 > source bin/activate # on bash shell
+
 > source bin/activate.csh # on csh shell
 
 - then, install chipseq pipeline:
 
 > fab -f chipseq-installer-master/scripts/chipseq_installer.py local deploy > chipseq_installer.out 2>&1 & # for bash shell
+
 > fab -f chipseq-installer-master/scripts/chipseq_installer.py local_csh deploy >& chipseq_installer.out & # for csh shell
 
 to follow the installation do
