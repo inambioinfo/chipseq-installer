@@ -41,7 +41,8 @@ env.meme_dir = os.path.join(env.bin_dir, 'meme')
 env.sicer_dir = os.path.join(env.bin_dir, 'sicer')
 env.java_dir = os.path.join(env.lib_dir, 'jdk1.7.0')
 env.chipseq_installer = os.path.join(env.project_dir, 'chipseq-installer-master')
-env.chipseq_path = os.path.join(env.project_dir, 'Process10')
+env.chipseq_pipeline = os.path.join(env.project_dir, 'chipseq-pipeline-master')
+env.chipseq_path = os.path.join(env.chipseq_pipeline, 'Process10')
 env.chipseq_config_path = os.path.join(env.chipseq_path, 'Config')
 env.use_sudo = False
 
@@ -49,10 +50,20 @@ env.use_sudo = False
 # == Host specific setup
 
 def local():
-    """Setup environment for local installation for running chipseq jobs on the cluster.
+    """Setup environment for local installation in bash shell for running chipseq jobs on the cluster.
     """
     env.r_dir = env.project_dir
+    env.shell = "/bin/bash"
     env.env_setup = ('env.sh')
+    env.activate = 'activate'
+
+def local_csh():
+    """Setup environment for local installation in csh shell for running chipseq jobs on the cluster.
+    """
+    env.r_dir = env.project_dir
+    env.shell = "/bin/csh"
+    env.env_setup = ('env_csh.sh')
+    env.activate = 'activate.csh'
 
 # ================================================================================
 # == Fabric instructions
@@ -101,8 +112,8 @@ def vlrun(command):
     Usage:
         vlrun('pip install tables')
     """
-    source = 'source %(project_dir)s/bin/activate && source %(project_dir)s/%(env_setup)s && ' % env
-    return lrun(source + command,shell='/bin/bash')    
+    source = 'source %(project_dir)s/bin/%(activate)s && source %(project_dir)s/%(env_setup)s && ' % env
+    return lrun(source + command, shell='%s' % env.shell)    
 
 def _if_not_python_lib(library):
     """Decorator that checks if a python library is installed.
@@ -605,20 +616,15 @@ def install_chipseq():
     update_config()
           
 def install_chipseq_pipeline():
-    """Checkout the latest chipseq code from public repository and update.
+    """Get the latest chipseq code from github.
     """
-    update = True
-    if env.chipseq_path is not None:
-        if not lexists(env.chipseq_path):
-            update = False
-            with lcd(os.path.split(env.chipseq_path)[0]):
-                lrun('svn co svn://uk-cri-lbio01/pipelines/chipseq/branches/BRANCH07/Process10 Process10')
-        with lcd(env.chipseq_path):
-            lrun("( ( echo '#!/usr/bin/env Rscript' ; echo 'RLIBSVar = \"%s\"' ; sed '1,2d' RScripts/Kick.r ) > RScripts/ChipSeq.r )" % env.r_lib_dir)
-            lrun("chmod a+x RScripts/ChipSeq.r")
-            if update:
-                lrun('svn update')
-
+    with lcd(env.project_dir):
+        lrun("wget --no-check-certificate -r https://github.com/crukci-bioinformatics/chipseq-pipeline/archive/master.zip -O master-pipeline.zip")
+        lrun("unzip master-pipeline.zip")
+    with lcd(env.chipseq_path):
+        lrun("( ( echo '#!/usr/bin/env Rscript' ; echo 'RLIBSVar = \"%s\"' ; sed '1,2d' RScripts/Kick.r ) > RScripts/ChipSeq.r )" % env.r_lib_dir)
+        lrun("chmod a+x RScripts/ChipSeq.r")
+        
 def update_config():
     import ConfigParser
     config = ConfigParser.SafeConfigParser()

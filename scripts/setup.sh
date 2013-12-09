@@ -36,10 +36,12 @@ pip install PyYAML
 echo "================================================================================"
 echo
 echo "[1] Please, to activate python virtualenv, do"
-echo ">>> source bin/activate"
+echo "-bash-> source bin/activate"
+echo "--csh-> source bin/activate.csh"
 echo
 echo "[2] Then, install chipseq pipeline:"
-echo ">>> fab -f chipseq-installer-master/scripts/chipseq_installer.py local deploy > chipseq_installer.out 2>&1 &"
+echo "-bash-> fab -f chipseq-installer-master/scripts/chipseq_installer.py local deploy > chipseq_installer.out 2>&1 &"
+echo "--csh-> fab -f chipseq-installer-master/scripts/chipseq_installer.py local_csh deploy >& chipseq_installer.out &"
 echo
 echo "================================================================================"
 echo
