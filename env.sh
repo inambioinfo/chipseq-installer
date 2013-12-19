@@ -8,4 +8,4 @@ export PERLLIB=${CHIPSEQ_ROOT}/bin/perl/lib
 export PERL5LIB=${CHIPSEQ_ROOT}/bin/perl/lib
 export PERL_MM_USE_DEFAULT=1
 unset PYTHONPATH
-export LD_LIBRARY_PATH=${CHIPSEQ_ROOT}/lib/R/lib:${CHIPSEQ_ROOT}/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${CHIPSEQ_ROOT}/lib:${CHIPSEQ_ROOT}/lib/R/lib
