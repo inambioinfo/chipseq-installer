@@ -89,6 +89,6 @@ If you wish to run on a non-LSF machine then please edit chipseq-pipeline-master
 
 > cd chipseq-test
 
-> chipseq-pipeline-master/Process10/RScripts/ChipSeq.r --genome mm9 --callMacsPeaks Yes --callMacsMotifs Yes --callMacsPeakProfile Yes
+> ../chipseq-pipeline-master/Process10/RScripts/ChipSeq.r --genome mm9 --callMacsPeaks Yes --callMacsMotifs Yes --callMacsPeakProfile Yes
 
 
