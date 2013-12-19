@@ -34,7 +34,8 @@ env.lib_dir = os.path.join(env.project_dir, 'lib')
 env.annotation_dir = os.path.join(env.project_dir, 'annotation')
 env.grch37_dir = os.path.join(env.annotation_dir, "grch37_ensembl")
 env.mm9_dir = os.path.join(env.annotation_dir, "mm9_Ensembl")
-env.testfq_dir = os.path.join(env.project_dir, "chipseq-test", "fqdirectory")
+env.test_dir = os.path.join(env.project_dir, "chipseq-test")
+env.testfq_dir = os.path.join(env.test_dir, "fqdirectory")
 env.r_lib_dir = os.path.join(env.project_dir, 'lib/R/library')
 env.perl_dir = os.path.join(env.bin_dir, 'perl')
 env.meme_dir = os.path.join(env.bin_dir, 'meme')
@@ -648,8 +649,14 @@ def update_config():
         config.set("Executables", "macs", os.path.join(env.bin_dir, "macs14"))
         config.set("Executables", "ame", os.path.join(env.bin_dir, "ame"))
         config.set("Executables", "sicer", os.path.join(env.bin_dir, "sicer"))
+        config.set("Executables", "tpics", os.path.join(env.chipseq_pipeline, "CRI_TPICS/tpic.r"))
+        config.set("Executables", "tpicszeta", os.path.join(env.chipseq_pipeline, "CRI_TPICS/zeta.pl"))
+        config.set("Executables", "tpicscreatecoverage", os.path.join(env.chipseq_pipeline, "CRI_TPICS/create_coverate.pl"))
 
         config.set("Workflow", "executable", os.path.join(env.lib_dir, "workflow-manager/workflow-all-1.4-SNAPSHOT.jar"))
+        config.set("Workflow", "taskdirectories", os.path.join(env.chipseq_path, "src/main/tasks"))
+        config.set("Workflow", "summaryfile", os.path.join(env.test_dir, "tmp"))
+        config.set("Workflow", "lsfoutputdirectory", os.path.join(env.test_dir, "tmp/joboutputs"))
         
         config.set("Libraries", "rlibs", env.r_lib_dir)
         config.set("Libraries", "pythonlibs", os.path.join(env.lib_dir, "python2.7/site-packages/"))
@@ -665,6 +672,8 @@ def update_config():
         config.set("Gene Positions", "grch37", ":".join([os.path.join(env.mm9_dir, "Homo_sapiens.GRCh37.67.gtf"), os.path.join(env.mm9_dir, "hsapiens_gene_ensembl__transcript__main.txt")]))
         config.set("Gene Positions", "hg18", "")
         config.set("Gene Positions", "mm9", ":".join([os.path.join(env.mm9_dir, "Mus_musculus.NCBIM37.67.gtf"), os.path.join(env.mm9_dir, "mmusculus_gene_ensembl__transcript__main.txt")]))
+        
+        config.set("GeneSets", "mm9", "")
         
         config.set("Excluded Regions", "grch37", "No_Excluded")
         config.set("Excluded Regions", "hg18", "No_Excluded")
