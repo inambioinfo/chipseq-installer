@@ -40,7 +40,7 @@ env.r_lib_dir = os.path.join(env.project_dir, 'lib/R/library')
 env.perl_dir = os.path.join(env.bin_dir, 'perl')
 env.meme_dir = os.path.join(env.bin_dir, 'meme')
 env.sicer_dir = os.path.join(env.bin_dir, 'sicer')
-env.java_dir = os.path.join(env.lib_dir, 'jdk1.7.0')
+env.java_dir = os.path.join(env.lib_dir, 'jdk1.7.0_51')
 env.chipseq_installer = os.path.join(env.project_dir, 'chipseq-installer-master')
 env.chipseq_pipeline = os.path.join(env.project_dir, 'chipseq-pipeline-master')
 env.chipseq_path = os.path.join(env.chipseq_pipeline, 'Process10')
@@ -449,10 +449,11 @@ def install_git():
 
 def install_java():
     """Install Java 7
+    http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz
     """
-    tar_file = "jdk-7-linux-x64.tar.gz"
+    tar_file = "jdk-7u51-linux-x64.tar.gz"
     with lcd(env.tmp_dir):
-        lrun('wget --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%%3A%%2F%%2Fwww.oracle.com" http://download.oracle.com/otn-pub/java/jdk/7/%s -O %s' % (tar_file, tar_file))
+        lrun('wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u51-b13/%s -O %s' % (tar_file, tar_file))
         lrun ("tar zxvf %s -C %s" % (tar_file, env.lib_dir))
 
 def install_workflow():
@@ -642,7 +643,7 @@ def update_config():
         config.set("Executables", "picard", os.path.join(env.bin_dir, "picard"))
         config.set("Executables", "rsync", os.path.join(env.bin_dir, "rsync"))
         config.set("Executables", "bedtools", env.bin_dir)
-        config.set("Executables", "java", os.path.join(env.lib_dir, "jdk1.7.0/bin/java"))
+        config.set("Executables", "java", os.path.join(env.lib_dir, "%s/bin/java" % env.java_dir))
         config.set("Executables", "rexec", os.path.join(env.bin_dir, "Rscript"))
         config.set("Executables", "bigwig", os.path.join(env.bin_dir, "bedGraphToBigWig"))
         config.set("Executables", "gtftobed", os.path.join(env.bin_dir, "gtf2bed.pl"))
