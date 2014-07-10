@@ -434,7 +434,7 @@ def install_perl_libraries():
 def install_rsync():
     """Install rsync 3.1.0
     """
-    url = "ftp://ftp.samba.org/pub/rsync/rsync-3.1.0.tar.gz"
+    url = "http://rsync.samba.org/ftp/rsync/src/rsync-3.1.0.tar.gz"
     _get_install(url, env, _configure_make)
     
 def install_git():
