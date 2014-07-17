@@ -723,7 +723,7 @@ def install_genomes():
 
 def configure_meme():
     with lcd(env.annotation_dir):
-	    URLForJasparAll =  "http://asp.ii.uib.no:8090/jaspar2010/DOWNLOAD/jaspar_CORE/non_redundant/all_species/FlatFileDir/"
+	    URLForJasparAll =  "http://jaspar.genereg.net/html/DOWNLOAD/ARCHIVE/JASPAR2010/JASPAR_CORE/non_redundant/all_species/FlatFileDir/"
 	    lrun("wget -r -nH --cut-dirs=2 --no-parent --reject=\"index.html*\" %s " % (URLForJasparAll))
 	    JasparLocation = os.path.join(env.annotation_dir, "jaspar_CORE/non_redundant/all_species/FlatFileDir/") 
 	    MemeJasparLocation = os.path.join(env.annotation_dir, "jaspar_CORE/Jaspar_NonRedunadant.meme") 
