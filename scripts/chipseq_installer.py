@@ -27,7 +27,7 @@ import yaml
 
 # -- Common setup
 env.hosts = ['localhost']
-env.project_dir = os.getcwd()
+env.project_dir = os.getenv('PWD')
 env.tmp_dir = os.path.join(env.project_dir, 'tmp')
 env.bin_dir = os.path.join(env.project_dir, 'bin')
 env.lib_dir = os.path.join(env.project_dir, 'lib')
