@@ -40,10 +40,12 @@ If you cannot you will have to setup your ssh keys like this:
 Before you have any of our codes on your computer...
 --------------------------------------------------------------------------------
 
-Create a project directory e.g. chipseq-test
-> mkdir chipseq-test
+Create a project directory e.g. chipseq
+NB. For cluster users, it is recommended to install your software in /home/ not in /lustre/
 
-> cd chipseq-test
+> mkdir chipseq
+
+> cd chipseq
 
 Get installer code
 > wget --no-check-certificate -r https://github.com/crukci-bioinformatics/chipseq-installer/archive/master.zip -O master-installer.zip
@@ -84,11 +86,41 @@ to follow the installation do
 
 Testing...
 --------------------------------------------------------------------------------
-To run on an LSF machine..you are good to go!!
+To run on an LSF machine... you are (almost) good to go!! Please read next section first!!
+
 If you wish to run on a non-LSF machine then please edit chipseq-pipeline-master/Process10/Config/config.ini and change "Mode = LSF" -> "Mode = local"
 
 > cd chipseq-test
 
 > ../chipseq-pipeline-master/Process10/RScripts/ChipSeq.r --genome mm9 --callMacsPeaks Yes --callMacsMotifs Yes --callMacsPeakProfile Yes
 
+Notes for LSF cluster users...
+--------------------------------------------------------------------------------
+The pipeline needs to be installed into /home/ and not on /lustre/.
+There are two directories that will need to be moved out of /home/ because they will be updated when running the pipeline : it is chipseq-test/ and annotation/.
 
+Create chipseq directory on lustre
+> mkdir /lustre/[me]/chipseq/
+
+Move the annotation into newly created chipseq directory on lustre
+> mv /home/[me]/chipseq/annotation /lustre/[me]/chipseq/annotation
+
+Move the chipseq-test into newly created chipseq directory on lustre
+> mv /home/[me]/chipseq/chipseq-test /lustre/[me]/chipseq/chipseq-test
+
+Edit the configuration file
+> vi /home/[me]/chipseq/chipseq-pipeline-master/Process10/Config/config.ini
+- replace /home/[me]/chipseq/annotation/ by /lustre/[me]/chipseq/annotation/
+- change queue cluster to your own
+
+Go to the chipseq-test directory
+> cd /lustre/[me]/chipseq/chipseq-test
+
+Activate the environment
+> source /home/[me]/chipseq/env.sh
+
+Run the test pipeline
+> /home/[me]/chipseq/chipseq-pipeline-master/Process10/RScripts/ChipSeq.r --genome mm9 --callMacsPeaks Yes --callMacsMotifs Yes --callMacsPeakProfile Yes > chipseq.out &
+
+Follow the process
+> tail -f chipseq.out
